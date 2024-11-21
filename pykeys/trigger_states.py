@@ -9,9 +9,9 @@ class TriggerStates:
     suppress: bool = field(default=True)
 
     def __str__(self):
-        parts = []
+        parts: list[str] = []
         if self.down:
-            parts.append(f"↓{self.down.title}")
+            parts.append(f"↓X")
         if self.up:
-            parts.append(f"↑{self.up.title}")
+            parts.append(f"↑X")
         return " ".join(parts)

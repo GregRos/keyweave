@@ -1,8 +1,7 @@
 import threading
-from typing import Callable, Optional
+from typing import Callable
 
 from keyboard import KeyboardEvent
-import keyboard
 from pykeys.trigger_states import TriggerStates
 from pykeys.trigger_info import TriggerInfo
 from pykeys.key import Key

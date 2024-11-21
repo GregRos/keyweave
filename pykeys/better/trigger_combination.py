@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pykeys.key import Key
+from pykeys.key_combination import KeyCombination
 
 
 @dataclass(init=False, eq=True)

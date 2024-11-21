@@ -1,11 +1,10 @@
 from logging import getLogger
-from typing import Any, Awaitable, Callable
+from typing import Any
 
 import keyboard
 
 
 from pykeys.key_combination import KeyCombination
-from pykeys.trigger_info import TriggerInfo
 from pykeys.compound_binding import CompoundBinding
 from pykeys.key import Key
 
@@ -36,7 +35,7 @@ class Layout:
 
     def add_bindings(self, *bindings: CompoundBinding):
         for binding in bindings:
-            self._bindings[binding.trigger] = binding
+            
 
     def __str__(self):
         def binding_to_row(binding: CompoundBinding):
@@ -66,16 +65,17 @@ class Layout:
         logger.info(f"Entering layout {self.name} with {len(self._bindings)} hotkeys")
         logger.info("\n" + str(self))
         for binding in self._bindings.values():
+            handler = binding.handler()
             self._registered += [
                 keyboard.hook_key(
                     binding.trigger.hook_id,
                     suppress=True,
-                    callback=binding.handler(self._send),
+                    callback=handler,
                 )
             ]
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any):
         logger.info(f"Exiting layout {self.name}")
         for registration in self._registered:
             keyboard.unhook(registration)

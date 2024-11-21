@@ -9,7 +9,6 @@ from win32api import GetAsyncKeyState  # type: ignore
 
 from pykeys.key_combination import KeyCombination
 from pykeys.labels import key_labels
-from pykeys.trigger_combination import TriggerCombination
 
 
 @total_ordering
