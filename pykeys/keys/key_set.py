@@ -49,8 +49,10 @@ class KeySet:
         return len(self.set)
 
     def __repr__(self) -> str:
+        if not self.set:
+            return ""
         joined = " + ".join(repr(key) for key in self.set)
-        return f"[{joined}]"
+        return joined
 
     def __str__(self) -> str:
         return repr(self)

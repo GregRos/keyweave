@@ -25,10 +25,18 @@ class KeyTrigger:
 
     @property
     def trigger_label(self) -> str:
-        return f"{self.type.char}{self.trigger}"
+        return f"{self.type.char} {self.trigger}"
 
     def __hash__(self) -> int:
         return hash((self.trigger, self.type, self.modifiers))
+
+    @property
+    def is_down(self) -> bool:
+        return self.type == "down"
+
+    @property
+    def is_up(self) -> bool:
+        return self.type == "up"
 
     def __lt__(self, other: "KeyTrigger") -> bool:
         return (self.trigger, self.type, self.modifiers) < (

@@ -2,6 +2,7 @@
 # pyright: reportUnknownVariableType=false
 # pyright: reportMissingTypeStubs=false
 # pyright: reportUnknownArgumentType=false
+from itertools import groupby
 import re
 from beautifultable import BeautifulTable, ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT
 
@@ -11,34 +12,45 @@ from pykeys.layout.layout import Layout
 
 
 def get_magic_marker(inner: str):
-    return f"@@@{inner}@@@"
+    return f"@{inner}@"
 
 
-_magic_marker_regex = re.compile(rf"^.*@@@(.+)@@@.*$", re.MULTILINE)
+_magic_marker_regex = re.compile(rf"^.*@(.+)@.*$", re.MULTILINE)
 _newline_regex = re.compile(r"\n")
 
 
 def get_layout_table(layout: Layout):
     table = BeautifulTable()
-    table.border = ""
+    table.border.left = "|"
+    table.border.right = "|"
+    table.border.top = ""
+    table.border.bottom = ""
     table.junction = ""
     table.rows.separator = ""
-
-    for key_binding in layout:
-        key = key_binding.key
-        table.rows.append([get_magic_marker(key.id), "", ""])
-        less_specific_first = sorted(
-            key_binding, key=lambda binding: binding.trigger.specificity
-        )
-        for binding in less_specific_first:
-            trigger_char = binding.trigger.type.char
-            modifiers = 
-            combo_str = " + ".join((trigger_char, str(binding.trigger.modifiers)))
-            table.rows.append([combo_str, binding.act.label, binding.act.description])
+    headings_saved: list[str] = []
+    for key_bindings in layout:
+        for heading_line, of_type in groupby(
+            key_bindings, key=lambda binding: binding.trigger.trigger_label
+        ):
+            index = len(headings_saved)
+            headings_saved.append(heading_line)
+            table.rows.append([get_magic_marker(str(index)), "", ""])
+            less_specific_first = sorted(
+                of_type, key=lambda binding: binding.trigger.specificity
+            )
+            for in_order in less_specific_first:
+                table.rows.append(
+                    [
+                        in_order.trigger.modifiers,
+                        in_order.act.label,
+                        in_order.act.description,
+                    ]
+                )
 
     def replacement_function(match: re.Match[str]):
-        key_id = match.group(1)
-        return f"{Key(key_id).label} ::"
+        heading_index = int(match.group(1))
+        heading = headings_saved[heading_index]
+        return f"{heading} +"
 
     table.columns.alignment = ALIGN_LEFT, ALIGN_LEFT, ALIGN_LEFT
     table_string = str(table)

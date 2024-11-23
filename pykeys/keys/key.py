@@ -51,7 +51,7 @@ class Key:
         return KeyTrigger(self, "up")
 
     def __repr__(self) -> str:
-        return self.id
+        return f"[{self.id}]"
 
     def __str__(self) -> str:
-        return self.id
+        return repr(self)

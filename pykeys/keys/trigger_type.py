@@ -1,9 +1,11 @@
+from functools import total_ordering
 from typing import Literal
 
 
 type TriggerTypeName = Literal["down", "up"]
 
 
+@total_ordering
 class TriggerType:
     __match_args__ = ("name",)
 
@@ -25,3 +27,6 @@ class TriggerType:
                 return self.name == s
             case _:
                 return False
+
+    def __lt__(self, other: "TriggerType") -> bool:
+        return self.name < other.name
