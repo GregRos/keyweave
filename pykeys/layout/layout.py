@@ -1,5 +1,4 @@
 from typing import Iterable
-import keyboard
 
 from pykeys.bindings.binding_collection import BindingCollection
 from pykeys.keys.trigger_binding import TriggerBinding
@@ -14,6 +13,7 @@ class Layout:
 
     def __init__(self, name: str, bindings: Iterable[TriggerBinding] = ()):
         self.name = name
+        self._map = BindingCollection()
         for binding in bindings:
             self.add_binding(binding)
 

@@ -3,7 +3,6 @@ from pykeys.bindings.key_binding_collection import KeyBindingCollection
 from pykeys.keys.key import Key
 
 from pykeys.keys.key_set import KeySet
-from pykeys.layout.keyboard_processing import create_handler  # type: ignore
 from keyboard import KeyboardEvent, hook_key, is_pressed, unhook
 
 from win32api import GetAsyncKeyState  # type: ignore
@@ -35,7 +34,7 @@ class KeyHook:
         def handler(event: KeyboardEvent):
             binding = get_best_binding(event)
             if binding:
-                binding.handler(binding.trigger, event)
+                binding.act(binding.trigger, event)
             return False
 
         return handler

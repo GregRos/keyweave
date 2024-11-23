@@ -18,10 +18,13 @@ class KeySet:
             case KeySet():
                 self.set = input.set
             case _:
-                self._set = frozenset(input)
+                self.set = frozenset(input)
 
     def __hash__(self) -> int:
         return hash(self.set)
+
+    def __bool__(self) -> bool:
+        return bool(self.set)
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, KeySet) and self.set == other.set

@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: messing_with_keys",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/example/messing_with_keys.py",
+      "console": "integratedTerminal"
+    }
+  ]
+}

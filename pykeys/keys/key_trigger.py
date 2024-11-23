@@ -1,11 +1,10 @@
-from typing import TYPE_CHECKING, Literal
-
+from typing import TYPE_CHECKING
 from pykeys.keys.key import Key
 from pykeys.keys.key_set import KeySet, KeysInput
 from pykeys.keys.trigger_type import TriggerType, TriggerTypeName
 
 if TYPE_CHECKING:
-    from pykeys.keys.trigger_binding import Handler
+    from pykeys.keys.cmd import Act
 
 
 class KeyTrigger:
@@ -14,7 +13,12 @@ class KeyTrigger:
     type: TriggerType
     modifiers: KeySet
 
-    def __init__(self, key: Key, type: TriggerTypeName, modifiers: KeysInput = set()):
+    def __init__(
+        self,
+        key: Key,
+        type: TriggerTypeName | TriggerType,
+        modifiers: KeysInput = set(),
+    ):
         self.trigger = key
         self.type = TriggerType(type)
         self.modifiers = KeySet(modifiers)
@@ -50,7 +54,7 @@ class KeyTrigger:
     def specificity(self):
         return self.trigger.specificity + self.modifiers.specificity
 
-    def bind(self, handler: Handler):
+    def bind(self, cmd: "Act"):
         from pykeys.keys.trigger_binding import TriggerBinding
 
-        return TriggerBinding(self, handler)
+        return TriggerBinding(self, cmd)

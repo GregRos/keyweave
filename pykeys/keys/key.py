@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 from functools import total_ordering
-from pprint import pp
 
 
 @total_ordering
-@dataclass(eq=True, order=True, match_args=True, frozen=True)
+@dataclass(eq=True, match_args=True, frozen=True)
 class Key:
     id: str
 
