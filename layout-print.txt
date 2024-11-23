@@ -1,0 +1,12 @@
+[num 4] down::
+    |         | Play/Pause     | Plays or pauses the current track.
+    | [num 0] | Next Track     | Skips to the next track.
+    | [num .] | Previous Track | Skips to the previous track.
+
+[num 5]:: 
+    ↓ + [num 1] | Volume_Mute
+    | [num 1] | Volume_Down
+    | [num 2] | Volume_Up    
+    down & num 0 :: Play/Pause
+    down & num . :: Next Track
+    down & num 1 :: Volume_Mute
