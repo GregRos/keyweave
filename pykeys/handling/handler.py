@@ -1,6 +1,6 @@
 from typing import Any, Protocol
 
-from pykeys.keys.event import HotkeyEvent
+from pykeys.handling.event import HotkeyEvent
 
 
 class _HandlerA(Protocol):

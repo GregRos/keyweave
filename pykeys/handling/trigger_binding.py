@@ -3,10 +3,10 @@ import inspect
 from typing import Any
 
 
-from pykeys.keys.event import HotkeyEvent
-from pykeys.keys.handler import Handler
+from pykeys.handling.event import HotkeyEvent
+from pykeys.handling.handler import Handler
 from pykeys.keys.key_trigger import KeyTrigger
-from pykeys.keys.metadata import HotkeyMetadata
+from pykeys.handling.metadata import HotkeyMetadata
 
 
 @dataclass(match_args=True)

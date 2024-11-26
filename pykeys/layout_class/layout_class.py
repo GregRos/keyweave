@@ -1,11 +1,10 @@
 from functools import partial
-from typing import NotRequired, TypedDict
 
-from pykeys.keys.trigger_binding import TriggerBinding
+from pykeys.handling.trigger_binding import TriggerBinding
 from pykeys.layout.layout import Layout
-from pykeys.layout.scheduling import Scheduler
+from pykeys.schedulers.scheduling import Scheduler
 from pykeys.layout_class.decorators import get_func_hotkeys, get_func_metadata
-from pykeys.schedulers.thread_pool import DefaultScheduler
+from pykeys.schedulers.default import DefaultScheduler
 
 
 def hotkey_layout(name: str | None = None, scheduler: Scheduler | None = None):

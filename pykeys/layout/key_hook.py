@@ -11,7 +11,7 @@ from win32api import GetAsyncKeyState  # type: ignore
 
 from typing import Any
 
-from pykeys.layout.scheduling import Scheduler
+from pykeys.schedulers.scheduling import Scheduler
 
 
 class KeyHook:

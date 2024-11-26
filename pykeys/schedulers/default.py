@@ -1,5 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
-from pykeys.layout.scheduling import ScheduleItem, Scheduler
+from pykeys.schedulers.scheduling import ScheduleItem, Scheduler
 
 
 class DefaultScheduler(Scheduler):

@@ -1,5 +1,5 @@
 from pykeys.keys.key_trigger import KeyTrigger
-from pykeys.keys.metadata import HotkeyMetadata
+from pykeys.handling.metadata import HotkeyMetadata
 
 
 from dataclasses import dataclass, field

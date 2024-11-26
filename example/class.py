@@ -4,7 +4,7 @@ from time import sleep
 
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from pykeys.keys.event import HotkeyEvent
+from pykeys.handling.event import HotkeyEvent
 
 from pykeys.keys import keys
 from pykeys.layout_class.decorators import hotkey

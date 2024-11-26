@@ -1,9 +1,9 @@
 from typing import Iterable
 
 from pykeys.bindings.binding_collection import BindingCollection
-from pykeys.keys.trigger_binding import TriggerBinding
+from pykeys.handling.trigger_binding import TriggerBinding
 from pykeys.layout.key_hook import KeyHook
-from pykeys.layout.scheduling import Scheduler
+from pykeys.schedulers.scheduling import Scheduler
 
 
 # KEY | MODIFIERS

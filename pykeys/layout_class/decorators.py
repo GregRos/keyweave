@@ -1,9 +1,9 @@
 from typing import Any, Callable, Protocol
-from pykeys.keys.event import HotkeyEvent
-from pykeys.keys.metadata import HotkeyMetadata
+from pykeys.handling.event import HotkeyEvent
+from pykeys.handling.metadata import HotkeyMetadata
 from pykeys.keys.key import KeyInput
 from pykeys.keys.key_set import KeySet, KeysInput
-from pykeys.keys.handler import Handler
+from pykeys.handling.handler import Handler
 from pykeys.keys.key_trigger import KeyTrigger
 
 

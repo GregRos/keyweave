@@ -4,8 +4,8 @@ from time import sleep
 
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from pykeys.keys.metadata import HotkeyMetadata
-from pykeys.schedulers.thread_pool import DefaultScheduler
+from pykeys.handling.metadata import HotkeyMetadata
+from pykeys.schedulers.default import DefaultScheduler
 
 from pykeys.layout.layout import Layout
 from pykeys.keys import keys
