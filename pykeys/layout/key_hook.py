@@ -1,7 +1,6 @@
 import threading
 from typing import Any
 from pykeys.bindings.key_binding_collection import KeyBindingCollection
-from pykeys.keys.cmd import EventInfo
 from pykeys.keys.key import Key
 
 from pykeys.keys.key_set import KeySet

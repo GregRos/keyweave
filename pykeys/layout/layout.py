@@ -1,7 +1,6 @@
-from typing import Callable, Iterable, Protocol
+from typing import Iterable
 
 from pykeys.bindings.binding_collection import BindingCollection
-from pykeys.keys.key import Key
 from pykeys.keys.trigger_binding import TriggerBinding
 from pykeys.layout.key_hook import KeyHook
 from pykeys.layout.scheduling import Scheduler
@@ -19,6 +18,8 @@ class Layout:
         name: str,
         scheduler: Scheduler,
         bindings: Iterable[TriggerBinding] = (),
+        *,
+        description: str = "",
     ):
         self.name = name
         self._scheduler = scheduler
@@ -29,6 +30,10 @@ class Layout:
     def __iadd__(self, binding: TriggerBinding):
         self.add_binding(binding)
         return self
+
+    @property
+    def is_empty(self):
+        return len(self._map) == 0
 
     @property
     def active(self):
@@ -49,6 +54,9 @@ class Layout:
         ]
 
     def __enter__(self):
+        from .print_layout import get_layout_table
+
+        print("Entering layout", get_layout_table(self))
         key_hooks = self._get_key_hooks()
         registered: list[KeyHook] = []
         try:

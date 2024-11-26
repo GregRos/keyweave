@@ -1,38 +1,36 @@
 from dataclasses import dataclass, field
 import inspect
-from typing import Any, Protocol
+from typing import Any, Protocol, Self
 
-from keyboard import KeyboardEvent
 from time import time
+from pykeys.keys.metadata import HotkeyMetadata
 from pykeys.keys.key_trigger import KeyTrigger
 
 
 @dataclass()
-class EventInfo:
-    label: str
-    description: str
+class EventInfo(HotkeyMetadata):
     trigger: KeyTrigger
     timestamp: float = field(default_factory=lambda: time(), init=False)
 
 
 class _HandlerA(Protocol):
-    def __call__(self, info: EventInfo, /) -> None: ...
+    def __call__(self, info: EventInfo, /) -> Any: ...
 
 
 class _HandlerB(Protocol):
-    def __call__(self, /) -> None: ...
+
+    def __call__(self, /) -> Any: ...
 
 
 type Handler = _HandlerA | _HandlerB
 
 
 class Act:
-    label: str
     handler: Handler
-    description: str = ""
+    metadata: HotkeyMetadata
     _number_of_args: int
 
-    def __init__(self, label: str, handler: Handler, description: str = ""):
+    def __init__(self, metadata: HotkeyMetadata, handler: Handler):
         if not callable(handler):
             raise ValueError(f"handler must be a callable, got {handler}")
         self._number_of_args = len(inspect.signature(handler).parameters)
@@ -40,15 +38,14 @@ class Act:
             raise ValueError(
                 f"handler must accept 0 or 1 arguments, got {self._number_of_args}"
             )
-        self.label = label
+        self.metadata = metadata
         self.handler = handler
-        self.description = description
 
     def __call__(self, trigger: KeyTrigger) -> None:
         handler: Any = self.handler
         info = EventInfo(
-            label=self.label,
-            description=self.description,
+            label=self.metadata.label,
+            description=self.metadata.description,
             trigger=trigger,
         )
         match self._number_of_args:

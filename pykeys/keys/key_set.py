@@ -11,7 +11,7 @@ class KeySet:
     __match_args__ = ("set",)
     set: frozenset[Key]
 
-    def __init__(self, input: KeysInput):
+    def __init__(self, input: KeysInput = {}):
         match input:
             case Key():
                 self.set = frozenset({input})

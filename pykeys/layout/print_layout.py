@@ -4,10 +4,9 @@
 # pyright: reportUnknownArgumentType=false
 from itertools import groupby
 import re
-from beautifultable import BeautifulTable, ALIGN_CENTER, ALIGN_LEFT, ALIGN_RIGHT
+from beautifultable import BeautifulTable, ALIGN_LEFT
 
 
-from pykeys.keys.key import Key
 from pykeys.layout.layout import Layout
 
 
@@ -42,8 +41,8 @@ def get_layout_table(layout: Layout):
                 table.rows.append(
                     [
                         in_order.trigger.modifiers,
-                        in_order.act.label,
-                        in_order.act.description,
+                        in_order.act.metadata.label,
+                        in_order.act.metadata.description,
                     ]
                 )
 

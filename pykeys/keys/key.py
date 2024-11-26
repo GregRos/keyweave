@@ -1,11 +1,16 @@
 from dataclasses import dataclass
 from functools import total_ordering
 
+type KeyInput = "str | Key"
+
 
 @total_ordering
-@dataclass(eq=True, match_args=True, frozen=True)
+@dataclass(eq=True, match_args=True, init=False)
 class Key:
     id: str
+
+    def __init__(self, input: KeyInput):
+        self.id = input if isinstance(input, str) else input.id
 
     @property
     def label(self):
