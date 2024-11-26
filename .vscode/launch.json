@@ -7,6 +7,13 @@
       "request": "launch",
       "program": "${workspaceFolder}/example/messing_with_keys.py",
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Python: set_hooks",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/example/set_hooks.py",
+      "console": "integratedTerminal"
     }
   ]
 }

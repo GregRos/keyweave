@@ -1,18 +1,18 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import inspect
 from typing import Any, Protocol
 
 from keyboard import KeyboardEvent
-
+from time import time
 from pykeys.keys.key_trigger import KeyTrigger
 
 
-@dataclass
+@dataclass()
 class EventInfo:
     label: str
     description: str
     trigger: KeyTrigger
-    event: KeyboardEvent
+    timestamp: float = field(default_factory=lambda: time(), init=False)
 
 
 class _HandlerA(Protocol):
@@ -44,13 +44,12 @@ class Act:
         self.handler = handler
         self.description = description
 
-    def __call__(self, trigger: KeyTrigger, event: KeyboardEvent) -> None:
+    def __call__(self, trigger: KeyTrigger) -> None:
         handler: Any = self.handler
         info = EventInfo(
             label=self.label,
             description=self.description,
             trigger=trigger,
-            event=event,
         )
         match self._number_of_args:
             case 0:

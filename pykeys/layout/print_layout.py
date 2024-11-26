@@ -58,4 +58,5 @@ def get_layout_table(layout: Layout):
     table_with_headings = _magic_marker_regex.sub(
         replacement_function, indented_table_string
     )
-    return table_with_headings
+    active = "✅" if layout.active else "❎"
+    return f"LAYOUT {layout.name} {active}\n{table_with_headings} "

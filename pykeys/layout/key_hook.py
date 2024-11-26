@@ -1,5 +1,7 @@
+import threading
 from typing import Any
 from pykeys.bindings.key_binding_collection import KeyBindingCollection
+from pykeys.keys.cmd import EventInfo
 from pykeys.keys.key import Key
 
 from pykeys.keys.key_set import KeySet
@@ -10,9 +12,30 @@ from win32api import GetAsyncKeyState  # type: ignore
 
 from typing import Any
 
+from pykeys.layout.scheduling import Scheduler
+
 
 class KeyHook:
     _internal_handler: Any
+    _lock = threading.Lock()
+
+    def __init__(
+        self, key: Key, collection: KeyBindingCollection, scheduler: Scheduler
+    ):
+        self.key = key
+        self._collection = collection
+        self._scheduler = scheduler
+        self.manufactured_handler = self._get_handler()
+
+    def __enter__(self):
+        self._internal_handler = hook_key(
+            _get_keyboard_hook_id(self.key), self.manufactured_handler, suppress=True
+        )
+        return self
+
+    def __exit__(self):
+        unhook(self._internal_handler)
+        return self
 
     def _get_handler(self):
         def get_best_binding(event: KeyboardEvent):
@@ -31,28 +54,18 @@ class KeyHook:
             )
             return by_specificity[0] if by_specificity else None
 
-        def handler(event: KeyboardEvent):
-            binding = get_best_binding(event)
+        def handler(info: KeyboardEvent):
+            binding = get_best_binding(info)
             if binding:
-                binding.act(binding.trigger, event)
-            return False
+
+                def _schedule_item():
+                    binding.act(binding.trigger)
+
+                self._scheduler(_schedule_item)
+                return False
+            return True
 
         return handler
-
-    def __init__(self, key: Key, collection: KeyBindingCollection):
-        self.key = key
-        self._collection = collection
-        self.manufactured_handler = self._get_handler()
-
-    def __enter__(self):
-        self._internal_handler = hook_key(
-            _get_keyboard_hook_id(self.key), self.manufactured_handler, suppress=True
-        )
-        return self
-
-    def __exit__(self):
-        unhook(self._internal_handler)
-        return self
 
 
 def _get_keyboard_hook_id(key: Key) -> str:

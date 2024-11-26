@@ -4,7 +4,7 @@ from pykeys.keys.key_set import KeySet, KeysInput
 from pykeys.keys.trigger_type import TriggerType, TriggerTypeName
 
 if TYPE_CHECKING:
-    from pykeys.keys.cmd import Act
+    from pykeys.keys.cmd import Handler
 
 
 class KeyTrigger:
@@ -52,8 +52,10 @@ class KeyTrigger:
         return KeyTrigger(self.trigger, self.type, self.modifiers + modifiers)
 
     def __repr__(self) -> str:
-        modifiers = f" & {self.modifiers}" if self.modifiers else ""
-        return " & ".join((self.trigger_label, repr(modifiers)))
+        if not self.modifiers:
+            return f"{self.trigger_label}"
+        else:
+            return f"{self.trigger_label} & {self.modifiers}"
 
     def __str__(self) -> str:
         return repr(self)
@@ -62,7 +64,8 @@ class KeyTrigger:
     def specificity(self):
         return self.trigger.specificity + self.modifiers.specificity
 
-    def bind(self, cmd: "Act"):
+    def bind(self, *, label: str, description: str = "", handler: "Handler"):
         from pykeys.keys.trigger_binding import TriggerBinding
+        from pykeys.keys.cmd import Act
 
-        return TriggerBinding(self, cmd)
+        return TriggerBinding(self, Act(label, handler, description))
