@@ -1,11 +1,41 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+import inspect
+from typing import Any
 
 
-from pykeys.keys.cmd import Act
+from pykeys.keys.event import HotkeyEvent
+from pykeys.keys.handler import Handler
 from pykeys.keys.key_trigger import KeyTrigger
+from pykeys.keys.metadata import HotkeyMetadata
 
 
 @dataclass(match_args=True)
 class TriggerBinding:
     trigger: KeyTrigger
-    act: Act
+    handler: Handler
+    metadata: HotkeyMetadata
+    _number_of_args: int = field(init=False)
+
+    def __post_init__(self):
+        self._number_of_args = len(inspect.signature(self.handler).parameters)
+        if not callable(self.handler):
+            raise ValueError(f"handler must be a callable, got {self.handler}")
+        if self._number_of_args not in (0, 1):
+            raise ValueError(
+                f"handler must accept 0 or 1 arguments, got {self._number_of_args}"
+            )
+
+    def __call__(self) -> None:
+        handler: Any = self.handler
+        info = HotkeyEvent(
+            label=self.metadata.label,
+            description=self.metadata.description,
+            trigger=self.trigger,
+        )
+        match self._number_of_args:
+            case 0:
+                return handler()
+            case 1:
+                return handler(info)
+            case _:
+                ...

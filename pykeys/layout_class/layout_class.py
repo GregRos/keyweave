@@ -1,7 +1,6 @@
 from functools import partial
-from typing import Any, Callable, NotRequired, TypedDict
+from typing import NotRequired, TypedDict
 
-from pykeys.keys.cmd import Act
 from pykeys.keys.trigger_binding import TriggerBinding
 from pykeys.layout.layout import Layout
 from pykeys.layout.scheduling import Scheduler
@@ -9,39 +8,25 @@ from pykeys.layout_class.decorators import get_func_hotkeys, get_func_metadata
 from pykeys.schedulers.thread_pool import DefaultScheduler
 
 
-class LayoutOptions(TypedDict):
-    name: NotRequired[str]
-    description: NotRequired[str]
-    scheduler: NotRequired[Scheduler]
-
-
-def hotkey_layout(
-    name: str | None = None, scheduler: Scheduler | None = None, description: str = ""
-):
+def hotkey_layout(name: str | None = None, scheduler: Scheduler | None = None):
     scheduler = scheduler or DefaultScheduler()
 
     def decorator(cls: type) -> Layout:
-        layout = Layout(
-            name or cls.__name__,
-            scheduler=scheduler,
-            description=description,
-        )
+        layout = Layout(name or cls.__name__, scheduler=scheduler)
         # go over every method
-        for key, value in cls.__dict__.items():
-            if not callable(value):
+        for key, handler in cls.__dict__.items():
+            if not callable(handler):
                 continue
-            hotkeys = get_func_hotkeys(value)
-            metadata = get_func_metadata(value).default(label=key)
-            has_self = "self" in value.__code__.co_varnames
+            hotkeys = get_func_hotkeys(handler)
+            metadata = get_func_metadata(handler).default(label=key)
+            has_self = "self" in handler.__code__.co_varnames
             if has_self:
-                value = partial(value, cls)
+                handler = partial(handler, cls)
             for trigger in hotkeys:
                 layout += TriggerBinding(
                     trigger,
-                    Act(
-                        handler=value,
-                        metadata=metadata,
-                    ),
+                    handler,
+                    metadata,
                 )
         if layout.is_empty:
             raise ValueError(f"Layout {layout.name} is empty")

@@ -56,11 +56,7 @@ class KeyHook:
         def handler(info: KeyboardEvent):
             binding = get_best_binding(info)
             if binding:
-
-                def _schedule_item():
-                    binding.act(binding.trigger)
-
-                self._scheduler(_schedule_item)
+                self._scheduler(binding)
                 return False
             return True
 

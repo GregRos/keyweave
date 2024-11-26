@@ -41,15 +41,19 @@ def get_layout_table(layout: Layout):
                 table.rows.append(
                     [
                         in_order.trigger.modifiers,
-                        in_order.act.metadata.label,
-                        in_order.act.metadata.description,
+                        in_order.metadata.label or " – ",
+                        in_order.metadata.description or " – ",
                     ]
                 )
 
     def replacement_function(match: re.Match[str]):
         heading_index = int(match.group(1))
         heading = headings_saved[heading_index]
-        return f"{heading} +"
+        result = f"{heading} +"
+        if heading_index > 0:
+            result = f"\n{result}"
+
+        return result
 
     table.columns.alignment = ALIGN_LEFT, ALIGN_LEFT, ALIGN_LEFT
     table_string = str(table)
@@ -57,5 +61,4 @@ def get_layout_table(layout: Layout):
     table_with_headings = _magic_marker_regex.sub(
         replacement_function, indented_table_string
     )
-    active = "✅" if layout.active else "❎"
-    return f"LAYOUT {layout.name} {active}\n{table_with_headings} "
+    return f"LAYOUT {layout.name}\n{table_with_headings} "

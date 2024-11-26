@@ -14,12 +14,7 @@ class Layout:
     _active: bool = False
 
     def __init__(
-        self,
-        name: str,
-        scheduler: Scheduler,
-        bindings: Iterable[TriggerBinding] = (),
-        *,
-        description: str = "",
+        self, name: str, scheduler: Scheduler, bindings: Iterable[TriggerBinding] = ()
     ):
         self.name = name
         self._scheduler = scheduler
@@ -56,7 +51,7 @@ class Layout:
     def __enter__(self):
         from .print_layout import get_layout_table
 
-        print("Entering layout", get_layout_table(self))
+        print(f"➡️ {get_layout_table(self)}")
         key_hooks = self._get_key_hooks()
         registered: list[KeyHook] = []
         try:

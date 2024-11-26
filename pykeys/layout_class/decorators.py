@@ -1,9 +1,9 @@
-from functools import partial, wraps
 from typing import Any, Callable, Protocol
+from pykeys.keys.event import HotkeyEvent
 from pykeys.keys.metadata import HotkeyMetadata
 from pykeys.keys.key import KeyInput
 from pykeys.keys.key_set import KeySet, KeysInput
-from pykeys.keys.cmd import EventInfo, Handler
+from pykeys.keys.handler import Handler
 from pykeys.keys.key_trigger import KeyTrigger
 
 
@@ -12,7 +12,7 @@ type TriggerInput = "KeyTrigger | KeyInput"
 
 class _HandlerAInst(Protocol):
 
-    def __call__(self, other_self: Any, info: EventInfo, /) -> Any: ...
+    def __call__(self, other_self: Any, info: HotkeyEvent, /) -> Any: ...
 
 
 class _HandlerBInst(Protocol):
@@ -33,7 +33,7 @@ def hotkey(trigger: TriggerInput, modifiers: KeysInput = KeySet()):
         hotkeys: set[KeyTrigger] = func.__dict__.setdefault("hotkeys", set())
         hotkeys.add(combined_trigger)
 
-        return func  # type: ignore
+        return func
 
     return decorate
 

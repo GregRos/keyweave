@@ -5,7 +5,7 @@ from pykeys.keys.key_set import KeySet, KeysInput
 from pykeys.keys.trigger_type import TriggerType, TriggerTypeName
 
 if TYPE_CHECKING:
-    from pykeys.keys.cmd import Handler
+    from pykeys.keys.handler import Handler
 
 
 class KeyTrigger:
@@ -67,6 +67,5 @@ class KeyTrigger:
 
     def bind(self, *, metadata: HotkeyMetadata, handler: "Handler"):
         from pykeys.keys.trigger_binding import TriggerBinding
-        from pykeys.keys.cmd import Act
 
-        return TriggerBinding(self, Act(metadata, handler))
+        return TriggerBinding(self, handler, metadata)
