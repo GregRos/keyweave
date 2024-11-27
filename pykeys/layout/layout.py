@@ -1,7 +1,7 @@
 from typing import Iterable
 
 from pykeys.bindings.binding_collection import BindingCollection
-from pykeys.handling.trigger_binding import TriggerBinding
+from pykeys.commanding.trigger_binding import CommandBinding
 from pykeys.layout.key_hook import KeyHook
 from pykeys.schedulers.scheduling import Scheduler
 
@@ -14,7 +14,7 @@ class Layout:
     _active: bool = False
 
     def __init__(
-        self, name: str, scheduler: Scheduler, bindings: Iterable[TriggerBinding] = ()
+        self, name: str, scheduler: Scheduler, bindings: Iterable[CommandBinding] = ()
     ):
         self.name = name
         self._scheduler = scheduler
@@ -22,7 +22,7 @@ class Layout:
         for binding in bindings:
             self.add_binding(binding)
 
-    def __iadd__(self, binding: TriggerBinding):
+    def __iadd__(self, binding: CommandBinding):
         self.add_binding(binding)
         return self
 
@@ -34,7 +34,7 @@ class Layout:
     def active(self):
         return self._active
 
-    def add_binding(self, binding: TriggerBinding):
+    def add_binding(self, binding: CommandBinding):
         self._map += binding
 
     def __len__(self):

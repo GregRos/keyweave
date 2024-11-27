@@ -1,6 +1,6 @@
 from functools import partial
 
-from pykeys.handling.trigger_binding import TriggerBinding
+from pykeys.commanding.trigger_binding import CommandBinding
 from pykeys.layout.layout import Layout
 from pykeys.schedulers.scheduling import Scheduler
 from pykeys.layout_class.decorators import get_func_hotkeys, get_func_metadata
@@ -22,7 +22,7 @@ def layout(name: str | None = None, scheduler: Scheduler | None = None):
             if has_self:
                 handler = partial(handler, cls)
             for trigger in hotkeys:
-                layout += TriggerBinding(
+                layout += CommandBinding(
                     trigger,
                     handler,
                     metadata,

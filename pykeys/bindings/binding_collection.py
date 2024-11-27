@@ -2,7 +2,7 @@ from typing import Any, Iterable, Iterator, overload
 
 from pykeys.key.key import Key
 from pykeys.key.key_trigger import KeyTrigger
-from pykeys.handling.trigger_binding import TriggerBinding
+from pykeys.commanding.trigger_binding import CommandBinding
 from pykeys.bindings.key_binding_collection import KeyBindingCollection
 
 
@@ -13,7 +13,7 @@ class BindingCollection(Iterable[KeyBindingCollection]):
     def __init__(self, input: dict[Key, KeyBindingCollection] = {}):
         self._map = input
 
-    def __add__(self, input: TriggerBinding):
+    def __add__(self, input: CommandBinding):
         trigger_key = input.trigger.trigger
         new_map = self._map.copy()
         trigger_collection = new_map.get(trigger_key, KeyBindingCollection(trigger_key))
@@ -33,11 +33,11 @@ class BindingCollection(Iterable[KeyBindingCollection]):
     def __getitem__(self, key: Key) -> KeyBindingCollection: ...
 
     @overload
-    def __getitem__(self, key: KeyTrigger) -> TriggerBinding: ...
+    def __getitem__(self, key: KeyTrigger) -> CommandBinding: ...
 
     def __getitem__(
         self, key: Key | KeyTrigger
-    ) -> KeyBindingCollection | TriggerBinding:
+    ) -> KeyBindingCollection | CommandBinding:
         match key:
             case Key():
                 return self._map[key]

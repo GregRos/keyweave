@@ -1,5 +1,5 @@
 from pykeys.key.key_trigger import KeyTrigger
-from pykeys.handling.metadata import HotkeyMetadata
+from pykeys.commanding.metadata import Command
 
 
 from dataclasses import dataclass, field
@@ -7,6 +7,6 @@ from time import time
 
 
 @dataclass()
-class HotkeyEvent(HotkeyMetadata):
+class CommandEvent(Command):
     trigger: KeyTrigger
     timestamp: float = field(default_factory=lambda: time(), init=False)

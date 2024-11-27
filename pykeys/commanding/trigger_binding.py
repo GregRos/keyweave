@@ -3,17 +3,17 @@ import inspect
 from typing import Any
 
 
-from pykeys.handling.event import HotkeyEvent
-from pykeys.handling.handler import Handler
+from pykeys.commanding.event import CommandEvent
+from pykeys.commanding.handler import Handler
 from pykeys.key.key_trigger import KeyTrigger
-from pykeys.handling.metadata import HotkeyMetadata
+from pykeys.commanding.metadata import Command
 
 
 @dataclass(match_args=True)
-class TriggerBinding:
+class CommandBinding:
     trigger: KeyTrigger
     handler: Handler
-    metadata: HotkeyMetadata
+    metadata: Command
     _number_of_args: int = field(init=False)
 
     def __post_init__(self):
@@ -27,7 +27,7 @@ class TriggerBinding:
 
     def __call__(self) -> None:
         handler: Any = self.handler
-        info = HotkeyEvent(
+        info = CommandEvent(
             label=self.metadata.label,
             description=self.metadata.description,
             trigger=self.trigger,

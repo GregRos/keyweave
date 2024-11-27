@@ -1,10 +1,10 @@
 from typing import Any, Protocol
 
-from pykeys.handling.event import HotkeyEvent
+from pykeys.commanding.event import CommandEvent
 
 
 class _HandlerA(Protocol):
-    def __call__(self, info: HotkeyEvent, /) -> Any: ...
+    def __call__(self, info: CommandEvent, /) -> Any: ...
 
 
 class _HandlerB(Protocol):

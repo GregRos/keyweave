@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING
-from pykeys.handling.metadata import HotkeyMetadata
+from pykeys.commanding.metadata import Command
 from pykeys.key.key import Key, KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
 from pykeys.key.trigger_type import TriggerType, TriggerTypeName
 
 if TYPE_CHECKING:
-    from pykeys.handling.handler import Handler
+    from pykeys.commanding.handler import Handler
 
 
 class KeyTrigger:
@@ -65,7 +65,7 @@ class KeyTrigger:
     def specificity(self):
         return self.trigger.specificity + self.modifiers.specificity
 
-    def bind(self, *, metadata: HotkeyMetadata, handler: "Handler"):
-        from pykeys.handling.trigger_binding import TriggerBinding
+    def bind(self, *, metadata: Command, handler: "Handler"):
+        from pykeys.commanding.trigger_binding import CommandBinding
 
-        return TriggerBinding(self, handler, metadata)
+        return CommandBinding(self, handler, metadata)

@@ -1,9 +1,9 @@
 from typing import Any, Callable, Protocol
-from pykeys.handling.event import HotkeyEvent
-from pykeys.handling.metadata import HotkeyMetadata
+from pykeys.commanding.event import CommandEvent
+from pykeys.commanding.metadata import Command
 from pykeys.key.key import KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
-from pykeys.handling.handler import Handler
+from pykeys.commanding.handler import Handler
 from pykeys.key.key_trigger import KeyTrigger
 
 
@@ -12,7 +12,7 @@ type TriggerInput = "KeyTrigger | KeyInput"
 
 class _HandlerAInst(Protocol):
 
-    def __call__(self, other_self: Any, info: HotkeyEvent, /) -> Any: ...
+    def __call__(self, other_self: Any, info: CommandEvent, /) -> Any: ...
 
 
 class _HandlerBInst(Protocol):
@@ -38,9 +38,9 @@ def hotkey(trigger: TriggerInput, modifiers: KeysInput = KeySet()):
     return decorate
 
 
-def metadata(label: str, description: str = ""):
+def command(label: str, description: str = ""):
     def decorate[T: Handler | InstHandler](func: T) -> T:
-        func.__dict__["metadata"] = HotkeyMetadata(label, description)
+        func.__dict__["metadata"] = Command(label, description)
         return func
 
     return decorate
@@ -50,5 +50,5 @@ def get_func_hotkeys(f: Callable[[], Any]) -> set[KeyTrigger]:
     return f.__dict__.get("hotkeys", set())
 
 
-def get_func_metadata(f: Callable[[], Any]) -> HotkeyMetadata:
-    return f.__dict__.get("metadata", HotkeyMetadata("", ""))
+def get_func_metadata(f: Callable[[], Any]) -> Command:
+    return f.__dict__.get("metadata", Command("", ""))
