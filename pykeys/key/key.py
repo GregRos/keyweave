@@ -18,14 +18,14 @@ class Key:
 
     @property
     def is_numpad(self):
-        return self.id.startswith("num ")
+        return self.id.startswith("num:")
 
     def __hash__(self) -> int:
         return hash(self.id)
 
     @property
     def is_mouse(self):
-        return self.id.startswith("mouse ")
+        return self.id.startswith("mouse:")
 
     @property
     def is_keyboard(self):
@@ -39,19 +39,19 @@ class Key:
         return 1
 
     def __add__(self, other: "Key"):
-        from pykeys.keys.key_set import KeySet
+        from pykeys.key.key_set import KeySet
 
         return KeySet({self, other})
 
     @property
     def down(self):
-        from pykeys.keys.key_trigger import KeyTrigger
+        from pykeys.key.key_trigger import KeyTrigger
 
         return KeyTrigger(self, "down")
 
     @property
     def up(self):
-        from pykeys.keys.key_trigger import KeyTrigger
+        from pykeys.key.key_trigger import KeyTrigger
 
         return KeyTrigger(self, "up")
 

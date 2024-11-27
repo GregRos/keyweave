@@ -8,7 +8,7 @@ from pykeys.handling.metadata import HotkeyMetadata
 from pykeys.schedulers.default import DefaultScheduler
 
 from pykeys.layout.layout import Layout
-from pykeys.keys import keys
+from pykeys import key as keys
 from pykeys.layout.print_layout import get_layout_table
 
 

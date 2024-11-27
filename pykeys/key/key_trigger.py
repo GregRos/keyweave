@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
 from pykeys.handling.metadata import HotkeyMetadata
-from pykeys.keys.key import Key, KeyInput
-from pykeys.keys.key_set import KeySet, KeysInput
-from pykeys.keys.trigger_type import TriggerType, TriggerTypeName
+from pykeys.key.key import Key, KeyInput
+from pykeys.key.key_set import KeySet, KeysInput
+from pykeys.key.trigger_type import TriggerType, TriggerTypeName
 
 if TYPE_CHECKING:
     from pykeys.handling.handler import Handler

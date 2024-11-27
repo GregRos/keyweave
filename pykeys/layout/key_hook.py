@@ -1,9 +1,9 @@
 import threading
 from typing import Any
 from pykeys.bindings.key_binding_collection import KeyBindingCollection
-from pykeys.keys.key import Key
+from pykeys.key.key import Key
 
-from pykeys.keys.key_set import KeySet
+from pykeys.key.key_set import KeySet
 from keyboard import KeyboardEvent, hook_key, is_pressed, unhook
 
 from win32api import GetAsyncKeyState  # type: ignore
@@ -65,35 +65,35 @@ class KeyHook:
 
 def _get_keyboard_hook_id(key: Key) -> str:
     match key.id:
-        case "num enter":
+        case "num:enter":
             return "enter"
-        case "num dot" | "num .":
+        case "num:dot" | "num:.":
             return "."
-        case "num star" | "num *" | "num multiply":
+        case "num:star" | "num:*" | "num:multiply":
             return "*"
-        case "num plus" | "num +":
+        case "num:plus" | "num:+":
             return "+"
-        case "num minus" | "num -":
+        case "num:minus" | "num:-":
             return "-"
-        case "num slash" | "num /":
+        case "num:slash" | "num:/":
             return "/"
-        case "mouse 1":
+        case "mouse:1":
             return "left"
-        case "mouse 2":
+        case "mouse:2":
             return "right"
-        case "mouse 3":
+        case "mouse:3":
             return "middlemouse"
-        case "mouse 4":
+        case "mouse:4":
             return "x"
-        case "mouse 5":
+        case "mouse:5":
             return "x2"
         case _:
-            return key.id
+            return key.id.replace("num:", "num ")
 
 
 def _get_windows_id_for_mouse_key(key: Key) -> int:
     if key.is_mouse:
-        return int(key.id.replace("mouse ", ""))
+        return int(key.id.replace("mouse:", ""))
     raise ValueError("Key is not a mouse key")
 
 

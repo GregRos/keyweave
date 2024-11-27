@@ -7,7 +7,7 @@ from pykeys.layout_class.decorators import get_func_hotkeys, get_func_metadata
 from pykeys.schedulers.default import DefaultScheduler
 
 
-def hotkey_layout(name: str | None = None, scheduler: Scheduler | None = None):
+def layout(name: str | None = None, scheduler: Scheduler | None = None):
     scheduler = scheduler or DefaultScheduler()
 
     def decorator(cls: type) -> Layout:

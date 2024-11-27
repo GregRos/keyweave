@@ -1,7 +1,7 @@
 from typing import Any, Iterable, Iterator, overload
 
-from pykeys.keys.key import Key
-from pykeys.keys.key_trigger import KeyTrigger
+from pykeys.key.key import Key
+from pykeys.key.key_trigger import KeyTrigger
 from pykeys.handling.trigger_binding import TriggerBinding
 from pykeys.bindings.key_binding_collection import KeyBindingCollection
 

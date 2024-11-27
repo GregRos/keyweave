@@ -1,7 +1,7 @@
 from functools import total_ordering
 from typing import Iterable
 
-from pykeys.keys.key import Key
+from pykeys.key.key import Key
 
 type KeysInput = Key | KeySet | Iterable[Key]
 

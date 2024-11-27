@@ -1,10 +1,10 @@
 from typing import Any, Callable, Protocol
 from pykeys.handling.event import HotkeyEvent
 from pykeys.handling.metadata import HotkeyMetadata
-from pykeys.keys.key import KeyInput
-from pykeys.keys.key_set import KeySet, KeysInput
+from pykeys.key.key import KeyInput
+from pykeys.key.key_set import KeySet, KeysInput
 from pykeys.handling.handler import Handler
-from pykeys.keys.key_trigger import KeyTrigger
+from pykeys.key.key_trigger import KeyTrigger
 
 
 type TriggerInput = "KeyTrigger | KeyInput"

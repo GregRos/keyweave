@@ -1,0 +1,3 @@
+# Pykeys
+
+Python hotkeys module

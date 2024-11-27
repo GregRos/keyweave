@@ -1,4 +1,4 @@
-from pykeys.keys.key_trigger import KeyTrigger
+from pykeys.key.key_trigger import KeyTrigger
 from pykeys.handling.metadata import HotkeyMetadata
 
 
