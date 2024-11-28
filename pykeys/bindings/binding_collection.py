@@ -2,7 +2,7 @@ from typing import Any, Iterable, Iterator, overload
 
 from pykeys.key.key import Key
 from pykeys.key.key_trigger import KeyTrigger
-from pykeys.commanding.trigger_binding import CommandBinding
+from pykeys.commanding.trigger_binding import CommandBinding, BindingInterceptor
 from pykeys.bindings.key_binding_collection import KeyBindingCollection
 
 
@@ -24,6 +24,10 @@ class BindingCollection(Iterable[KeyBindingCollection]):
     @property
     def keys(self) -> set[Key]:
         return set(self._map.keys())
+
+    @property
+    def bindings(self) -> Iterable[CommandBinding]:
+        return (binding for collection in self for binding in collection)
 
     @property
     def pairs(self) -> Iterable[tuple[Key, KeyBindingCollection]]:

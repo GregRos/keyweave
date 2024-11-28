@@ -1,12 +1,15 @@
 from dataclasses import dataclass, field
 import inspect
-from typing import Any
+from typing import Any, Callable
 
 
 from pykeys.commanding.event import CommandEvent
 from pykeys.commanding.handler import Handler
 from pykeys.key.key_trigger import KeyTrigger
 from pykeys.commanding.metadata import Command
+
+
+type BindingInterceptor = Callable[[CommandBinding], None]
 
 
 @dataclass(match_args=True)
@@ -39,3 +42,13 @@ class CommandBinding:
                 return handler(info)
             case _:
                 ...
+
+    def intercept(self, interceptor: BindingInterceptor) -> "CommandBinding":
+        def interception_handler():
+            interceptor(self)
+
+        return CommandBinding(
+            trigger=self.trigger,
+            handler=interception_handler,
+            metadata=self.metadata,
+        )
