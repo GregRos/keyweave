@@ -8,12 +8,10 @@ from pykeys.layout_class.decorators import (
     get_func_metadata,
     is_interceptor,
 )
-from pykeys.schedulers.threadpool import ThreadPoolScheduler
 from pykeys.util.func import maybe_bind_self
 
 
 def layout(name: str | None = None, scheduler: Scheduler | None = None):
-    scheduler = scheduler or ThreadPoolScheduler()
 
     def decorator(cls: type) -> Layout:
         interceptors: list[Any] = []

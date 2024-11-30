@@ -60,7 +60,7 @@ class KeyHook:
                 return True
 
             def binding_invoker():
-                binding(KeyEvent())
+                binding(KeyEvent(info.time))
 
             self._scheduler(binding_invoker)
             return False

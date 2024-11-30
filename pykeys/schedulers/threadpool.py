@@ -1,6 +1,5 @@
 from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
-from typing import Protocol
 from pykeys.schedulers.scheduling import ScheduleErrorHandler, ScheduleItem, Scheduler
 
 

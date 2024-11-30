@@ -1,5 +1,5 @@
 from typing import Any, Callable, Protocol
-from pykeys.commanding.event import KeyEvent
+from pykeys.commanding.event import KeyEvent, TriggeredKeyEvent
 from pykeys.commanding.metadata import Command
 from pykeys.key.key import KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
@@ -13,9 +13,7 @@ type TriggerInput = "KeyTrigger | KeyInput"
 
 class InstHandler(Protocol):
 
-    def __call__(
-        self, other_self: Any, trigger: KeyTrigger, event: KeyEvent, /
-    ) -> Any: ...
+    def __call__(self, other_self: Any, event: TriggeredKeyEvent, /) -> Any: ...
 
 
 def hotkey(trigger: TriggerInput, modifiers: KeysInput = KeySet()):

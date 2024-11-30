@@ -1,10 +1,9 @@
 from dataclasses import dataclass, field
 import inspect
-from typing import Callable
 
 
 from pykeys.bindings.interception import ActionInterceptor, InterceptedAction
-from pykeys.commanding.event import KeyEvent
+from pykeys.commanding.event import KeyEvent, TriggeredKeyEvent
 from pykeys.commanding.handler import Handler
 from pykeys.key.key_trigger import KeyTrigger
 from pykeys.commanding.metadata import Command
@@ -21,9 +20,9 @@ class CommandBinding:
         self._number_of_args = len(inspect.signature(self.handler).parameters)
         if not callable(self.handler):
             raise ValueError(f"handler must be a callable, got {self.handler}")
-        if self._number_of_args != 2:
+        if self._number_of_args != 1:
             raise ValueError(
-                f"handler must accept 2 arguments, got {self._number_of_args}"
+                f"handler must accept 1 argument, got {self._number_of_args}"
             )
 
     def intercept(self, *interceptors: ActionInterceptor):
@@ -34,16 +33,15 @@ class CommandBinding:
 
     def __call__(self, event: KeyEvent, /):
         handler = self.handler
-        handler(self.trigger, event)
+        triggered_key_event = TriggeredKeyEvent(self.trigger, event)
+        handler(triggered_key_event)
 
 
 def _wrap_interceptor(interceptor: ActionInterceptor, handler: Handler) -> Handler:
-    def _handler(trigger: KeyTrigger, event: KeyEvent):
-        interception = InterceptedAction(trigger, event, handler)
+    def _handler(e: TriggeredKeyEvent):
+        interception = InterceptedAction(e, handler)
         interceptor(interception)
         if not interception.handled:
-            raise ValueError(
-                f"Interceptor {interceptor} did not handle {trigger}@{event}"
-            )
+            raise ValueError(f"Interceptor {interceptor} did not handle {e}")
 
     return _handler

@@ -2,12 +2,10 @@ from typing import Iterable
 
 
 from pykeys.bindings.binding_collection import BindingCollection
-from pykeys.commanding.event import KeyEvent
-from pykeys.commanding.handler import Handler
 from pykeys.bindings.trigger_binding import CommandBinding
-from pykeys.key.key_trigger import KeyTrigger
-from pykeys.bindings.interception import ActionInterceptor, InterceptedAction
+from pykeys.bindings.interception import ActionInterceptor
 from pykeys.layout.key_hook import KeyHook
+from pykeys.schedulers.default import default_scheduler
 from pykeys.schedulers.scheduling import Scheduler
 
 
@@ -19,8 +17,15 @@ class Layout:
     _active: bool = False
 
     def __init__(
-        self, name: str, scheduler: Scheduler, bindings: Iterable[CommandBinding] = ()
+        self,
+        name: str,
+        scheduler: Scheduler | None = None,
+        bindings: Iterable[CommandBinding] = (),
     ):
+        def on_error(e: BaseException):
+            print(f"Error: {e}")
+
+        scheduler = scheduler or default_scheduler(on_error)
         self.name = name
         self._scheduler = scheduler
         self._map = BindingCollection()
@@ -36,21 +41,10 @@ class Layout:
         return len(self._map) == 0
 
     def intercept(self, interceptor: ActionInterceptor):
-        def _intercept_handler(handler: Handler):
-            def _handler(trigger: KeyTrigger, event: KeyEvent):
-                interception = InterceptedAction(trigger, event, handler)
-                interceptor(interception)
-                if not interception.handled:
-                    raise ValueError(
-                        f"Interceptor {interceptor} did not handle {trigger}@{event}"
-                    )
-
-            return _handler
-
         return Layout(
             self.name,
             self._scheduler,
-            [b.map(_intercept_handler) for b in self._map.bindings],
+            [binding.intercept(interceptor) for binding in self._map.bindings],
         )
 
     @property
@@ -65,6 +59,10 @@ class Layout:
 
     def __iter__(self):
         return iter(self._map)
+
+    @property
+    def bindings(self):
+        return self._map.bindings
 
     def _get_key_hooks(self):
         return [

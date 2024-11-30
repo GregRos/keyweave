@@ -1,7 +1,15 @@
-from dataclasses import dataclass, field
-from time import time
+from dataclasses import dataclass
+import time
+from pykeys.key.key_trigger import KeyTrigger
 
 
-@dataclass
 class KeyEvent:
-    timestamp: float = field(default_factory=lambda: time(), init=False)
+    def __init__(self, timestamp: float | None = None):
+        self.timestamp = timestamp or time.time()
+
+
+@dataclass(init=False)
+class TriggeredKeyEvent(KeyTrigger, KeyEvent):
+    def __init__(self, trigger: KeyTrigger, event: KeyEvent):
+        KeyTrigger.__init__(self, trigger.trigger, trigger.type, trigger.modifiers)
+        KeyEvent.__init__(self, event.timestamp)
