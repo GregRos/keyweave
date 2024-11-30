@@ -1,7 +1,6 @@
-from functools import partial
 from typing import Any
 
-from pykeys.commanding.trigger_binding import CommandBinding, BindingInterceptor
+from pykeys.commanding.trigger_binding import CommandBinding
 from pykeys.layout.layout import Layout
 from pykeys.schedulers.scheduling import Scheduler
 from pykeys.layout_class.decorators import (
@@ -10,6 +9,7 @@ from pykeys.layout_class.decorators import (
     is_interceptor,
 )
 from pykeys.schedulers.default import DefaultScheduler
+from pykeys.util.func import maybe_bind_self
 
 
 def layout(name: str | None = None, scheduler: Scheduler | None = None):
@@ -23,17 +23,14 @@ def layout(name: str | None = None, scheduler: Scheduler | None = None):
             if not callable(handler):
                 continue
             if is_interceptor(handler):
-                interceptors.append(handler)
+                interceptors.append(maybe_bind_self(handler, cls))
                 continue
             hotkeys = get_func_hotkeys(handler)
             metadata = get_func_metadata(handler).default(label=key)
-            has_self = "self" in handler.__code__.co_varnames
-            if has_self:
-                handler = partial(handler, cls)
             for trigger in hotkeys:
                 layout += CommandBinding(
                     trigger,
-                    handler,
+                    maybe_bind_self(handler, cls),
                     metadata,
                 )
         if layout.is_empty:

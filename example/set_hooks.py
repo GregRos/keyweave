@@ -2,6 +2,9 @@ import os
 import sys
 from time import sleep
 
+from pykeys.commanding.event import KeyEvent
+from pykeys.key.key_trigger import KeyTrigger
+
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from pykeys.commanding.metadata import Command
@@ -12,8 +15,8 @@ from pykeys import key as keys
 from pykeys.layout.print_layout import get_layout_table
 
 
-def a(event: Command):
-    print(f"It happened: {event.label}")
+def a(trigger: KeyTrigger, event: KeyEvent):
+    print(f"It happened: {trigger}")
 
 
 sch = DefaultScheduler()

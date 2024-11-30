@@ -1,6 +1,7 @@
 import threading
 from typing import Any
 from pykeys.bindings.key_binding_collection import KeyBindingCollection
+from pykeys.commanding.event import KeyEvent
 from pykeys.key.key import Key
 
 from pykeys.key.key_set import KeySet
@@ -55,10 +56,14 @@ class KeyHook:
 
         def handler(info: KeyboardEvent):
             binding = get_best_binding(info)
-            if binding:
-                self._scheduler(binding)
-                return False
-            return True
+            if not binding:
+                return True
+
+            def binding_invoker():
+                binding(KeyEvent())
+
+            self._scheduler(binding_invoker)
+            return False
 
         return handler
 

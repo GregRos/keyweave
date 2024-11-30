@@ -2,7 +2,7 @@ from typing import Any, Iterable, Iterator, overload
 
 from pykeys.key.key import Key
 from pykeys.key.key_trigger import KeyTrigger
-from pykeys.commanding.trigger_binding import CommandBinding, BindingInterceptor
+from pykeys.commanding.trigger_binding import CommandBinding
 from pykeys.bindings.key_binding_collection import KeyBindingCollection
 
 

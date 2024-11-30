@@ -2,11 +2,12 @@ import os
 import sys
 from time import sleep
 
-from pykeys.commanding.trigger_binding import CommandBinding
-
-
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from pykeys.commanding.event import CommandEvent
+
+from pykeys.commanding.event import KeyEvent
+from pykeys.key.key_trigger import KeyTrigger
+from pykeys.layout.interception import InterceptedAction
+
 
 from pykeys import key as keys
 from pykeys.layout_class.decorators import hotkey, intercepts
@@ -16,20 +17,20 @@ from pykeys.layout_class.layout_class import layout
 @layout(name="my super special awesome layout")
 class AsddBC:
 
-    @intercepts
-    def intercept(self, binding: CommandBinding):
-        print(f"Intercepted {binding}")
+    @intercepts()
+    def intercept(self, action: InterceptedAction):
+        print(f"Intercepted {action}")
 
     @hotkey(keys.num_1)
-    def abc(self, event: CommandEvent):
+    def abc(self, trigger: KeyTrigger, event: KeyEvent):
         print(event)
 
     @hotkey(keys.num_1.down.with_modifiers(keys.num_0))
-    def abcd(self, event: CommandEvent):
+    def abcd(self, trigger: KeyTrigger, event: KeyEvent):
         print(event)
 
     @hotkey(keys.num_3, modifiers=keys.num_dot + keys.num_0)
-    def abcde(self, event: CommandEvent):
+    def abcde(self, trigger: KeyTrigger, event: KeyEvent):
         print(event)
 
 

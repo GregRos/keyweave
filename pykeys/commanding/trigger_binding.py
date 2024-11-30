@@ -1,15 +1,12 @@
 from dataclasses import dataclass, field
 import inspect
-from typing import Any, Callable
+from typing import Callable
 
 
-from pykeys.commanding.event import CommandEvent
+from pykeys.commanding.event import KeyEvent
 from pykeys.commanding.handler import Handler
 from pykeys.key.key_trigger import KeyTrigger
 from pykeys.commanding.metadata import Command
-
-
-type BindingInterceptor = Callable[[CommandBinding], None]
 
 
 @dataclass(match_args=True)
@@ -23,32 +20,13 @@ class CommandBinding:
         self._number_of_args = len(inspect.signature(self.handler).parameters)
         if not callable(self.handler):
             raise ValueError(f"handler must be a callable, got {self.handler}")
-        if self._number_of_args not in (0, 1):
+        if self._number_of_args != 2:
             raise ValueError(
-                f"handler must accept 0 or 1 arguments, got {self._number_of_args}"
+                f"handler must accept 2 arguments, got {self._number_of_args}"
             )
 
-    def __call__(self) -> None:
-        handler: Any = self.handler
-        info = CommandEvent(
-            label=self.metadata.label,
-            description=self.metadata.description,
-            trigger=self.trigger,
-        )
-        match self._number_of_args:
-            case 0:
-                return handler()
-            case 1:
-                return handler(info)
-            case _:
-                ...
+    def map(self, handler_map: Callable[[Handler], Handler]) -> "CommandBinding":
+        return CommandBinding(self.trigger, handler_map(self.handler), self.metadata)
 
-    def intercept(self, interceptor: BindingInterceptor) -> "CommandBinding":
-        def interception_handler():
-            interceptor(self)
-
-        return CommandBinding(
-            trigger=self.trigger,
-            handler=interception_handler,
-            metadata=self.metadata,
-        )
+    def __call__(self, event: KeyEvent, /):
+        return self.handler(self.trigger, event)

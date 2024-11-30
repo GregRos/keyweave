@@ -6,7 +6,6 @@ from pykeys.key.key_trigger import KeyTrigger
 from pykeys.commanding.handler import Handler
 from pykeys.commanding.trigger_binding import CommandBinding
 from pykeys.commanding.metadata import Command
-from pykeys.commanding.event import CommandEvent
 
 from pykeys.layout.layout import Layout
 from pykeys.schedulers.scheduling import Scheduler

@@ -1,7 +1,12 @@
 from typing import Iterable
 
+
 from pykeys.bindings.binding_collection import BindingCollection
-from pykeys.commanding.trigger_binding import CommandBinding, BindingInterceptor
+from pykeys.commanding.event import KeyEvent
+from pykeys.commanding.handler import Handler
+from pykeys.commanding.trigger_binding import CommandBinding
+from pykeys.key.key_trigger import KeyTrigger
+from pykeys.layout.interception import ActionInterceptor, InterceptedAction
 from pykeys.layout.key_hook import KeyHook
 from pykeys.schedulers.scheduling import Scheduler
 
@@ -30,11 +35,22 @@ class Layout:
     def is_empty(self):
         return len(self._map) == 0
 
-    def intercept(self, interceptor: BindingInterceptor):
+    def intercept(self, interceptor: ActionInterceptor):
+        def _intercept_handler(handler: Handler):
+            def _handler(trigger: KeyTrigger, event: KeyEvent):
+                interception = InterceptedAction(trigger, event, handler)
+                interceptor(interception)
+                if not interception.handled:
+                    raise ValueError(
+                        f"Interceptor {interceptor} did not handle {trigger}@{event}"
+                    )
+
+            return _handler
+
         return Layout(
             self.name,
             self._scheduler,
-            [binding.intercept(interceptor) for binding in self._map.bindings],
+            [b.map(_intercept_handler) for b in self._map.bindings],
         )
 
     @property
