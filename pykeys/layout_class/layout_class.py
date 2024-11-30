@@ -1,6 +1,6 @@
 from typing import Any
 
-from pykeys.commanding.trigger_binding import CommandBinding
+from pykeys.bindings.trigger_binding import CommandBinding
 from pykeys.layout.layout import Layout
 from pykeys.schedulers.scheduling import Scheduler
 from pykeys.layout_class.decorators import (
@@ -8,12 +8,12 @@ from pykeys.layout_class.decorators import (
     get_func_metadata,
     is_interceptor,
 )
-from pykeys.schedulers.default import DefaultScheduler
+from pykeys.schedulers.threadpool import ThreadPoolScheduler
 from pykeys.util.func import maybe_bind_self
 
 
 def layout(name: str | None = None, scheduler: Scheduler | None = None):
-    scheduler = scheduler or DefaultScheduler()
+    scheduler = scheduler or ThreadPoolScheduler()
 
     def decorator(cls: type) -> Layout:
         interceptors: list[Any] = []

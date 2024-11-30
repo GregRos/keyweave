@@ -8,7 +8,7 @@ from pykeys.key.key_trigger import KeyTrigger
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from pykeys.commanding.metadata import Command
-from pykeys.schedulers.default import DefaultScheduler
+from pykeys.schedulers.threadpool import ThreadPoolScheduler
 
 from pykeys.layout.layout import Layout
 from pykeys import key as keys
@@ -19,7 +19,7 @@ def a(trigger: KeyTrigger, event: KeyEvent):
     print(f"It happened: {trigger}")
 
 
-sch = DefaultScheduler()
+sch = ThreadPoolScheduler()
 
 lt = Layout("messing_with_keys", sch)
 lt += keys.num_1.down.bind(handler=a, metadata=Command("a", "something something"))

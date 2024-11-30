@@ -4,9 +4,9 @@ from typing import Iterable
 from pykeys.bindings.binding_collection import BindingCollection
 from pykeys.commanding.event import KeyEvent
 from pykeys.commanding.handler import Handler
-from pykeys.commanding.trigger_binding import CommandBinding
+from pykeys.bindings.trigger_binding import CommandBinding
 from pykeys.key.key_trigger import KeyTrigger
-from pykeys.layout.interception import ActionInterceptor, InterceptedAction
+from pykeys.bindings.interception import ActionInterceptor, InterceptedAction
 from pykeys.layout.key_hook import KeyHook
 from pykeys.schedulers.scheduling import Scheduler
 

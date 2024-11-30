@@ -16,11 +16,11 @@ class InterceptedAction:
         self.event = event
         self._handler = handler
 
-    def run(self):
+    def next(self):
         self._handled = True
         self._handler(self.trigger, self.event)
 
-    def skip(self):
+    def end(self):
         self._handled = True
 
     @property

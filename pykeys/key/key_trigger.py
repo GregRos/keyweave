@@ -66,6 +66,6 @@ class KeyTrigger:
         return self.trigger.specificity + self.modifiers.specificity
 
     def bind(self, *, metadata: Command, handler: "Handler"):
-        from pykeys.commanding.trigger_binding import CommandBinding
+        from pykeys.bindings.trigger_binding import CommandBinding
 
         return CommandBinding(self, handler, metadata)

@@ -5,7 +5,7 @@ from pykeys.key.key import KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
 from pykeys.commanding.handler import Handler
 from pykeys.key.key_trigger import KeyTrigger
-from pykeys.layout.interception import InterceptedAction
+from pykeys.bindings.interception import InterceptedAction
 
 
 type TriggerInput = "KeyTrigger | KeyInput"

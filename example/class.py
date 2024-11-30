@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from pykeys.commanding.event import KeyEvent
 from pykeys.key.key_trigger import KeyTrigger
-from pykeys.layout.interception import InterceptedAction
+from pykeys.bindings.interception import InterceptedAction
 
 
 from pykeys import key as keys

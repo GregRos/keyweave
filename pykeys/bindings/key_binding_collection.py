@@ -1,6 +1,6 @@
 from pykeys.key.key import Key
 from pykeys.key.key_trigger import KeyTrigger
-from pykeys.commanding.trigger_binding import CommandBinding
+from pykeys.bindings.trigger_binding import CommandBinding
 
 
 from typing import Iterator

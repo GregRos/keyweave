@@ -8,3 +8,7 @@ class ScheduleItem(Protocol):
 class Scheduler(Protocol):
 
     def __call__(self, func: ScheduleItem) -> None: ...
+
+
+class ScheduleErrorHandler(Protocol):
+    def __call__(self, error: BaseException) -> None: ...

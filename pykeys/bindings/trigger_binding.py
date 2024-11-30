@@ -3,6 +3,7 @@ import inspect
 from typing import Callable
 
 
+from pykeys.bindings.interception import ActionInterceptor, InterceptedAction
 from pykeys.commanding.event import KeyEvent
 from pykeys.commanding.handler import Handler
 from pykeys.key.key_trigger import KeyTrigger
@@ -25,8 +26,24 @@ class CommandBinding:
                 f"handler must accept 2 arguments, got {self._number_of_args}"
             )
 
-    def map(self, handler_map: Callable[[Handler], Handler]) -> "CommandBinding":
-        return CommandBinding(self.trigger, handler_map(self.handler), self.metadata)
+    def intercept(self, *interceptors: ActionInterceptor):
+        handler = self.handler
+        for interceptor in interceptors:
+            handler = _wrap_interceptor(interceptor, handler)
+        return CommandBinding(self.trigger, handler, self.metadata)
 
     def __call__(self, event: KeyEvent, /):
-        return self.handler(self.trigger, event)
+        handler = self.handler
+        handler(self.trigger, event)
+
+
+def _wrap_interceptor(interceptor: ActionInterceptor, handler: Handler) -> Handler:
+    def _handler(trigger: KeyTrigger, event: KeyEvent):
+        interception = InterceptedAction(trigger, event, handler)
+        interceptor(interception)
+        if not interception.handled:
+            raise ValueError(
+                f"Interceptor {interceptor} did not handle {trigger}@{event}"
+            )
+
+    return _handler
