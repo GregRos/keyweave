@@ -7,7 +7,7 @@ from pykeys.schedulers.default import default_scheduler
 
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from pykeys.commanding.metadata import Command
+from pykeys.commanding.command import Command
 
 from pykeys.layout.layout import Layout
 from pykeys import key as keys

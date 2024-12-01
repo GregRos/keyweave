@@ -4,9 +4,8 @@ from time import sleep
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from pykeys.commanding.event import InputEvent, HotkeyEvent
-from pykeys.key.key_trigger import Hotkey
-from pykeys.bindings.interception import InterceptedAction
+from pykeys.commanding.event import HotkeyEvent
+from pykeys.bindings.interceptor import InterceptedAction
 
 
 from pykeys import key as keys

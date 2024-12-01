@@ -29,18 +29,18 @@ def get_layout_table(layout: Layout):
     headings_saved: list[str] = []
     for key_bindings in layout:
         for heading_line, of_type in groupby(
-            key_bindings, key=lambda binding: binding.trigger.trigger_label
+            key_bindings, key=lambda binding: binding.hotkey.trigger_label
         ):
             index = len(headings_saved)
             headings_saved.append(heading_line)
             table.rows.append([get_magic_marker(str(index)), "", ""])
             less_specific_first = sorted(
-                of_type, key=lambda binding: binding.trigger.specificity
+                of_type, key=lambda binding: binding.hotkey.specificity
             )
             for in_order in less_specific_first:
                 table.rows.append(
                     [
-                        in_order.trigger.modifiers,
+                        in_order.hotkey.modifiers,
                         in_order.metadata.label or " – ",
                         in_order.metadata.description or " – ",
                     ]

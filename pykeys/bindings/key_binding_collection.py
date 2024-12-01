@@ -1,6 +1,6 @@
 from pykeys.key.key import Key
-from pykeys.key.key_trigger import Hotkey
-from pykeys.bindings.trigger_binding import Binding
+from pykeys.key.hotkey import Hotkey
+from pykeys.bindings.binding import Binding
 
 
 from typing import Iterator
@@ -18,7 +18,7 @@ class KeyBindingCollection:
         return self._map[key]
 
     def set(self, binding: Binding):
-        return KeyBindingCollection(self.key, {**self._map, binding.trigger: binding})
+        return KeyBindingCollection(self.key, {**self._map, binding.hotkey: binding})
 
     def __len__(self) -> int:
         return len(self._map)

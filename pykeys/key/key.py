@@ -45,13 +45,13 @@ class Key:
 
     @property
     def down(self):
-        from pykeys.key.key_trigger import Hotkey
+        from pykeys.key.hotkey import Hotkey
 
         return Hotkey(self, "down")
 
     @property
     def up(self):
-        from pykeys.key.key_trigger import Hotkey
+        from pykeys.key.hotkey import Hotkey
 
         return Hotkey(self, "up")
 

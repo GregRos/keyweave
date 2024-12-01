@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import time
-from pykeys.key.key_trigger import Hotkey
+from pykeys.key.hotkey import Hotkey
 
 
 class InputEvent:

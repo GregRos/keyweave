@@ -42,14 +42,14 @@ class KeyHook:
             only_matching = [
                 binding
                 for binding in self._collection
-                if binding.trigger.trigger.is_numpad == event.is_keypad
-                and _is_key_set_active(binding.trigger.modifiers)
-                and binding.trigger.type == event.event_type
+                if binding.hotkey.trigger.is_numpad == event.is_keypad
+                and _is_key_set_active(binding.hotkey.modifiers)
+                and binding.hotkey.type == event.event_type
             ]
 
             by_specificity = sorted(
                 only_matching,
-                key=lambda binding: binding.trigger.specificity,
+                key=lambda binding: binding.hotkey.specificity,
                 reverse=True,
             )
             return by_specificity[0] if by_specificity else None

@@ -2,8 +2,8 @@ from typing import Iterable
 
 
 from pykeys.bindings.binding_collection import BindingCollection
-from pykeys.bindings.trigger_binding import Binding
-from pykeys.bindings.interception import ActionInterceptor
+from pykeys.bindings.binding import Binding
+from pykeys.bindings.interceptor import ActionInterceptor
 from pykeys.layout.key_hook import KeyHook
 from pykeys.schedulers.default import default_scheduler
 from pykeys.schedulers.scheduling import Scheduler

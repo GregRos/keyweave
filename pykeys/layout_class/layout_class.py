@@ -1,6 +1,6 @@
 from typing import Any
 
-from pykeys.bindings.trigger_binding import Binding
+from pykeys.bindings.binding import Binding
 from pykeys.layout.layout import Layout
 from pykeys.schedulers.scheduling import Scheduler
 from pykeys.layout_class.decorators import (

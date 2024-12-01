@@ -1,11 +1,11 @@
 from typing import Any, Callable, Protocol
-from pykeys.commanding.event import InputEvent, HotkeyEvent
-from pykeys.commanding.metadata import Command
+from pykeys.commanding.event import HotkeyEvent
+from pykeys.commanding.command import Command
 from pykeys.key.key import KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
 from pykeys.commanding.handler import Handler
-from pykeys.key.key_trigger import Hotkey
-from pykeys.bindings.interception import InterceptedAction
+from pykeys.key.hotkey import Hotkey
+from pykeys.bindings.interceptor import InterceptedAction
 
 
 type TriggerInput = "Hotkey | KeyInput"
@@ -17,14 +17,14 @@ class InstHandler(Protocol):
 
 
 def hotkey(trigger: TriggerInput, modifiers: KeysInput = KeySet()):
-    combined_trigger = (
+    combined_hotkey = (
         trigger if isinstance(trigger, Hotkey) else Hotkey(trigger, "down")
     )
-    combined_trigger = combined_trigger.with_modifiers(modifiers)
+    combined_hotkey = combined_hotkey.with_modifiers(modifiers)
 
     def decorate(func: InstHandler) -> Handler | InstHandler:
         hotkeys: set[Hotkey] = func.__dict__.setdefault("hotkeys", set())
-        hotkeys.add(combined_trigger)
+        hotkeys.add(combined_hotkey)
 
         return func
 

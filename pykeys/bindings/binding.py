@@ -2,16 +2,16 @@ from dataclasses import dataclass, field
 import inspect
 
 
-from pykeys.bindings.interception import ActionInterceptor, InterceptedAction
+from pykeys.bindings.interceptor import ActionInterceptor, InterceptedAction
 from pykeys.commanding.event import InputEvent, HotkeyEvent
 from pykeys.commanding.handler import Handler
-from pykeys.key.key_trigger import Hotkey
-from pykeys.commanding.metadata import Command
+from pykeys.key.hotkey import Hotkey
+from pykeys.commanding.command import Command
 
 
 @dataclass(match_args=True)
 class Binding:
-    trigger: Hotkey
+    hotkey: Hotkey
     handler: Handler
     metadata: Command
     _number_of_args: int = field(init=False)
@@ -29,11 +29,11 @@ class Binding:
         handler = self.handler
         for interceptor in interceptors:
             handler = _wrap_interceptor(interceptor, handler)
-        return Binding(self.trigger, handler, self.metadata)
+        return Binding(self.hotkey, handler, self.metadata)
 
     def __call__(self, event: InputEvent, /):
         handler = self.handler
-        triggered_key_event = HotkeyEvent(self.trigger, event)
+        triggered_key_event = HotkeyEvent(self.hotkey, event)
         handler(triggered_key_event)
 
 

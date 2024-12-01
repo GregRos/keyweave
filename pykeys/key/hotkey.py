@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
-from pykeys.commanding.metadata import Command
+from pykeys.commanding.command import Command
 from pykeys.key.key import Key, KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
-from pykeys.key.trigger_type import TriggerType, TriggerTypeName
+from pykeys.key.key_event_type import KeyEventType, TriggerTypeName
 
 if TYPE_CHECKING:
     from pykeys.commanding.handler import Handler
@@ -11,17 +11,17 @@ if TYPE_CHECKING:
 class Hotkey:
     __match_args__ = ("key", "type", "modifiers")
     trigger: Key
-    type: TriggerType
+    type: KeyEventType
     modifiers: KeySet
 
     def __init__(
         self,
         key: KeyInput,
-        type: TriggerTypeName | TriggerType,
+        type: TriggerTypeName | KeyEventType,
         modifiers: KeysInput = set(),
     ):
         self.trigger = Key(key)
-        self.type = TriggerType(type)
+        self.type = KeyEventType(type)
         self.modifiers = KeySet(modifiers)
 
     @property
@@ -66,6 +66,6 @@ class Hotkey:
         return self.trigger.specificity + self.modifiers.specificity
 
     def bind(self, *, metadata: Command, handler: "Handler"):
-        from pykeys.bindings.trigger_binding import Binding
+        from pykeys.bindings.binding import Binding
 
         return Binding(self, handler, metadata)

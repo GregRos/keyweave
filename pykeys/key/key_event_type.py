@@ -6,10 +6,10 @@ type TriggerTypeName = Literal["down", "up"]
 
 
 @total_ordering
-class TriggerType:
+class KeyEventType:
     __match_args__ = ("name",)
 
-    def __init__(self, name: "TriggerTypeName | TriggerType"):
+    def __init__(self, name: "TriggerTypeName | KeyEventType"):
         self.name = name if isinstance(name, str) else name.name
 
     def __hash__(self) -> int:
@@ -21,12 +21,12 @@ class TriggerType:
 
     def __eq__(self, other: object) -> bool:
         match other:
-            case TriggerType(other_name):
+            case KeyEventType(other_name):
                 return self.name == other_name
             case str(s):
                 return self.name == s
             case _:
                 return False
 
-    def __lt__(self, other: "TriggerType") -> bool:
+    def __lt__(self, other: "KeyEventType") -> bool:
         return self.name < other.name
