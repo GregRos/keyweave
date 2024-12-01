@@ -1,8 +1,8 @@
 from typing import Any, Iterable, Iterator, overload
 
 from pykeys.key.key import Key
-from pykeys.key.key_trigger import KeyTrigger
-from pykeys.bindings.trigger_binding import CommandBinding
+from pykeys.key.key_trigger import Hotkey
+from pykeys.bindings.trigger_binding import Binding
 from pykeys.bindings.key_binding_collection import KeyBindingCollection
 
 
@@ -13,7 +13,7 @@ class BindingCollection(Iterable[KeyBindingCollection]):
     def __init__(self, input: dict[Key, KeyBindingCollection] = {}):
         self._map = input
 
-    def __add__(self, input: CommandBinding):
+    def __add__(self, input: Binding):
         trigger_key = input.trigger.trigger
         new_map = self._map.copy()
         trigger_collection = new_map.get(trigger_key, KeyBindingCollection(trigger_key))
@@ -26,7 +26,7 @@ class BindingCollection(Iterable[KeyBindingCollection]):
         return set(self._map.keys())
 
     @property
-    def bindings(self) -> Iterable[CommandBinding]:
+    def bindings(self) -> Iterable[Binding]:
         return (binding for collection in self for binding in collection)
 
     @property
@@ -37,15 +37,13 @@ class BindingCollection(Iterable[KeyBindingCollection]):
     def __getitem__(self, key: Key) -> KeyBindingCollection: ...
 
     @overload
-    def __getitem__(self, key: KeyTrigger) -> CommandBinding: ...
+    def __getitem__(self, key: Hotkey) -> Binding: ...
 
-    def __getitem__(
-        self, key: Key | KeyTrigger
-    ) -> KeyBindingCollection | CommandBinding:
+    def __getitem__(self, key: Key | Hotkey) -> KeyBindingCollection | Binding:
         match key:
             case Key():
                 return self._map[key]
-            case KeyTrigger():
+            case Hotkey():
                 return self._map[key.trigger][key]
 
     def __iter__(self) -> Iterator[KeyBindingCollection]:

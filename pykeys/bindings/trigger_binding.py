@@ -3,15 +3,15 @@ import inspect
 
 
 from pykeys.bindings.interception import ActionInterceptor, InterceptedAction
-from pykeys.commanding.event import KeyEvent, TriggeredKeyEvent
+from pykeys.commanding.event import InputEvent, HotkeyEvent
 from pykeys.commanding.handler import Handler
-from pykeys.key.key_trigger import KeyTrigger
+from pykeys.key.key_trigger import Hotkey
 from pykeys.commanding.metadata import Command
 
 
 @dataclass(match_args=True)
-class CommandBinding:
-    trigger: KeyTrigger
+class Binding:
+    trigger: Hotkey
     handler: Handler
     metadata: Command
     _number_of_args: int = field(init=False)
@@ -29,16 +29,16 @@ class CommandBinding:
         handler = self.handler
         for interceptor in interceptors:
             handler = _wrap_interceptor(interceptor, handler)
-        return CommandBinding(self.trigger, handler, self.metadata)
+        return Binding(self.trigger, handler, self.metadata)
 
-    def __call__(self, event: KeyEvent, /):
+    def __call__(self, event: InputEvent, /):
         handler = self.handler
-        triggered_key_event = TriggeredKeyEvent(self.trigger, event)
+        triggered_key_event = HotkeyEvent(self.trigger, event)
         handler(triggered_key_event)
 
 
 def _wrap_interceptor(interceptor: ActionInterceptor, handler: Handler) -> Handler:
-    def _handler(e: TriggeredKeyEvent):
+    def _handler(e: HotkeyEvent):
         interception = InterceptedAction(e, handler)
         interceptor(interception)
         if not interception.handled:

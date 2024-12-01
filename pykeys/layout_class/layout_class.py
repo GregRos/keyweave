@@ -1,6 +1,6 @@
 from typing import Any
 
-from pykeys.bindings.trigger_binding import CommandBinding
+from pykeys.bindings.trigger_binding import Binding
 from pykeys.layout.layout import Layout
 from pykeys.schedulers.scheduling import Scheduler
 from pykeys.layout_class.decorators import (
@@ -26,7 +26,7 @@ def layout(name: str | None = None, scheduler: Scheduler | None = None):
             hotkeys = get_func_hotkeys(handler)
             metadata = get_func_metadata(handler).default(label=key)
             for trigger in hotkeys:
-                layout += CommandBinding(
+                layout += Binding(
                     trigger,
                     maybe_bind_self(handler, cls),
                     metadata,

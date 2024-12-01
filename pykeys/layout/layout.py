@@ -2,7 +2,7 @@ from typing import Iterable
 
 
 from pykeys.bindings.binding_collection import BindingCollection
-from pykeys.bindings.trigger_binding import CommandBinding
+from pykeys.bindings.trigger_binding import Binding
 from pykeys.bindings.interception import ActionInterceptor
 from pykeys.layout.key_hook import KeyHook
 from pykeys.schedulers.default import default_scheduler
@@ -20,7 +20,7 @@ class Layout:
         self,
         name: str,
         scheduler: Scheduler | None = None,
-        bindings: Iterable[CommandBinding] = (),
+        bindings: Iterable[Binding] = (),
     ):
         def on_error(e: BaseException):
             print(f"Error: {e}")
@@ -32,7 +32,7 @@ class Layout:
         for binding in bindings:
             self.add_binding(binding)
 
-    def __iadd__(self, binding: CommandBinding):
+    def __iadd__(self, binding: Binding):
         self.add_binding(binding)
         return self
 
@@ -51,7 +51,7 @@ class Layout:
     def active(self):
         return self._active
 
-    def add_binding(self, binding: CommandBinding):
+    def add_binding(self, binding: Binding):
         self._map += binding
 
     def __len__(self):

@@ -2,7 +2,7 @@ import os
 import sys
 from time import sleep
 
-from pykeys.commanding.event import TriggeredKeyEvent
+from pykeys.commanding.event import HotkeyEvent
 from pykeys.schedulers.default import default_scheduler
 
 
@@ -18,7 +18,7 @@ def on_error(e: BaseException):
     print(f"Error: {e}")
 
 
-def a(e: TriggeredKeyEvent):
+def a(e: HotkeyEvent):
     print(f"It happened: {e}")
 
 

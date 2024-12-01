@@ -2,9 +2,9 @@
 from pykeys.key.key import Key, KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
 from pykeys.key.trigger_type import TriggerType, TriggerTypeName
-from pykeys.key.key_trigger import KeyTrigger
+from pykeys.key.key_trigger import Hotkey
 from pykeys.commanding.handler import Handler
-from pykeys.bindings.trigger_binding import CommandBinding
+from pykeys.commanding.event import HotkeyEvent
 from pykeys.commanding.metadata import Command
 
 from pykeys.layout.layout import Layout

@@ -1,7 +1,7 @@
 import threading
 from typing import Any
 from pykeys.bindings.key_binding_collection import KeyBindingCollection
-from pykeys.commanding.event import KeyEvent
+from pykeys.commanding.event import InputEvent
 from pykeys.key.key import Key
 
 from pykeys.key.key_set import KeySet
@@ -60,7 +60,7 @@ class KeyHook:
                 return True
 
             def binding_invoker():
-                binding(KeyEvent(info.time))
+                binding(InputEvent(info.time))
 
             self._scheduler(binding_invoker)
             return False

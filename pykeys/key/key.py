@@ -45,15 +45,15 @@ class Key:
 
     @property
     def down(self):
-        from pykeys.key.key_trigger import KeyTrigger
+        from pykeys.key.key_trigger import Hotkey
 
-        return KeyTrigger(self, "down")
+        return Hotkey(self, "down")
 
     @property
     def up(self):
-        from pykeys.key.key_trigger import KeyTrigger
+        from pykeys.key.key_trigger import Hotkey
 
-        return KeyTrigger(self, "up")
+        return Hotkey(self, "up")
 
     def __repr__(self) -> str:
         return f"[{self.id}]"

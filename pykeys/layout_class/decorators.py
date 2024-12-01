@@ -1,29 +1,29 @@
 from typing import Any, Callable, Protocol
-from pykeys.commanding.event import KeyEvent, TriggeredKeyEvent
+from pykeys.commanding.event import InputEvent, HotkeyEvent
 from pykeys.commanding.metadata import Command
 from pykeys.key.key import KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
 from pykeys.commanding.handler import Handler
-from pykeys.key.key_trigger import KeyTrigger
+from pykeys.key.key_trigger import Hotkey
 from pykeys.bindings.interception import InterceptedAction
 
 
-type TriggerInput = "KeyTrigger | KeyInput"
+type TriggerInput = "Hotkey | KeyInput"
 
 
 class InstHandler(Protocol):
 
-    def __call__(self, other_self: Any, event: TriggeredKeyEvent, /) -> Any: ...
+    def __call__(self, other_self: Any, event: HotkeyEvent, /) -> Any: ...
 
 
 def hotkey(trigger: TriggerInput, modifiers: KeysInput = KeySet()):
     combined_trigger = (
-        trigger if isinstance(trigger, KeyTrigger) else KeyTrigger(trigger, "down")
+        trigger if isinstance(trigger, Hotkey) else Hotkey(trigger, "down")
     )
     combined_trigger = combined_trigger.with_modifiers(modifiers)
 
     def decorate(func: InstHandler) -> Handler | InstHandler:
-        hotkeys: set[KeyTrigger] = func.__dict__.setdefault("hotkeys", set())
+        hotkeys: set[Hotkey] = func.__dict__.setdefault("hotkeys", set())
         hotkeys.add(combined_trigger)
 
         return func
@@ -55,7 +55,7 @@ def intercepts():
     return decorate
 
 
-def get_func_hotkeys(f: Callable[[], Any]) -> set[KeyTrigger]:
+def get_func_hotkeys(f: Callable[[], Any]) -> set[Hotkey]:
     return f.__dict__.get("hotkeys", set())
 
 

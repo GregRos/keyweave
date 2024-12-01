@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from pykeys.commanding.handler import Handler
 
 
-class KeyTrigger:
+class Hotkey:
     __match_args__ = ("key", "type", "modifiers")
     trigger: Key
     type: TriggerType
@@ -39,7 +39,7 @@ class KeyTrigger:
     def is_up(self) -> bool:
         return self.type == "up"
 
-    def __lt__(self, other: "KeyTrigger") -> bool:
+    def __lt__(self, other: "Hotkey") -> bool:
         return (self.trigger, self.type, self.modifiers) < (
             other.trigger,
             other.type,
@@ -50,7 +50,7 @@ class KeyTrigger:
         return self.with_modifiers(other)
 
     def with_modifiers(self, modifiers: KeysInput):
-        return KeyTrigger(self.trigger, self.type, self.modifiers + modifiers)
+        return Hotkey(self.trigger, self.type, self.modifiers + modifiers)
 
     def __repr__(self) -> str:
         if not self.modifiers:
@@ -66,6 +66,6 @@ class KeyTrigger:
         return self.trigger.specificity + self.modifiers.specificity
 
     def bind(self, *, metadata: Command, handler: "Handler"):
-        from pykeys.bindings.trigger_binding import CommandBinding
+        from pykeys.bindings.trigger_binding import Binding
 
-        return CommandBinding(self, handler, metadata)
+        return Binding(self, handler, metadata)

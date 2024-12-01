@@ -4,8 +4,8 @@ from time import sleep
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from pykeys.commanding.event import KeyEvent, TriggeredKeyEvent
-from pykeys.key.key_trigger import KeyTrigger
+from pykeys.commanding.event import InputEvent, HotkeyEvent
+from pykeys.key.key_trigger import Hotkey
 from pykeys.bindings.interception import InterceptedAction
 
 
@@ -22,15 +22,15 @@ class AsddBC:
         print(f"Intercepted {action}")
 
     @hotkey(keys.num_1)
-    def abc(self, e: TriggeredKeyEvent):
+    def abc(self, e: HotkeyEvent):
         print(e)
 
     @hotkey(keys.num_1.down.with_modifiers(keys.num_0))
-    def abcd(self, e: TriggeredKeyEvent):
+    def abcd(self, e: HotkeyEvent):
         print(e)
 
     @hotkey(keys.num_3, modifiers=keys.num_dot + keys.num_0)
-    def abcde(self, e: TriggeredKeyEvent):
+    def abcde(self, e: HotkeyEvent):
         print(e)
 
 
