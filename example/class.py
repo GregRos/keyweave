@@ -5,7 +5,7 @@ from time import sleep
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from pykeys.commanding.event import HotkeyEvent
-from pykeys.bindings.interceptor import InterceptedAction
+from pykeys.bindings.interceptor import InterceptedHotkey
 
 
 from pykeys import key as keys
@@ -17,7 +17,7 @@ from pykeys.layout_class.layout_class import layout
 class AsddBC:
 
     @intercepts()
-    def intercept(self, action: InterceptedAction):
+    def intercept(self, action: InterceptedHotkey):
         print(f"Intercepted {action}")
 
     @hotkey(keys.num_1)

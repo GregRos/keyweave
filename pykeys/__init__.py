@@ -13,3 +13,4 @@ from pykeys.schedulers.threadpool import ThreadPoolScheduler
 
 from pykeys.layout_class.decorators import hotkey, command, intercepts
 from pykeys.layout_class.layout_class import layout
+from pykeys.bindings.interceptor import InterceptedHotkey, HotkeyInterceptor

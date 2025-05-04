@@ -5,7 +5,7 @@ from pykeys.key.key import KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
 from pykeys.commanding.handler import Handler
 from pykeys.key.hotkey import Hotkey
-from pykeys.bindings.interceptor import InterceptedAction
+from pykeys.bindings.interceptor import InterceptedHotkey
 
 
 type TriggerInput = "Hotkey | KeyInput"
@@ -41,7 +41,7 @@ def command(label: str, description: str = ""):
 
 class InstActionInterceptor(Protocol):
 
-    def __call__(self, other_self: Any, action: InterceptedAction, /) -> Any: ...
+    def __call__(self, other_self: Any, action: InterceptedHotkey, /) -> Any: ...
 
 
 def intercepts():

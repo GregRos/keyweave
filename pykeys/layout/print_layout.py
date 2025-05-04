@@ -41,8 +41,8 @@ def get_layout_table(layout: Layout):
                 table.rows.append(
                     [
                         in_order.hotkey.modifiers,
-                        in_order.metadata.label or " – ",
-                        in_order.metadata.description or " – ",
+                        in_order.command.label or " – ",
+                        in_order.command.description or " – ",
                     ]
                 )
 

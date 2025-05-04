@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import time
+from pykeys.commanding.command import Command
 from pykeys.key.hotkey import Hotkey
 
 
@@ -8,8 +9,8 @@ class InputEvent:
         self.timestamp = timestamp or time.time()
 
 
-@dataclass(init=False)
-class HotkeyEvent(Hotkey, InputEvent):
-    def __init__(self, trigger: Hotkey, event: InputEvent):
-        Hotkey.__init__(self, trigger.trigger, trigger.type, trigger.modifiers)
-        InputEvent.__init__(self, event.timestamp)
+@dataclass
+class HotkeyEvent:
+    hotkey: Hotkey
+    event: InputEvent
+    command: Command

@@ -1,21 +1,21 @@
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Any, Protocol
 from pykeys.commanding.event import HotkeyEvent
 from pykeys.commanding.handler import Handler
 
 
 @dataclass(init=False)
-class InterceptedAction:
+class InterceptedHotkey(HotkeyEvent):
     _handled: bool = False
-    event: HotkeyEvent
 
     def __init__(self, event: HotkeyEvent, handler: Handler):
-        self.event = event
+        HotkeyEvent.__init__(self, event.hotkey, event.event, event.command)
         self._handler = handler
 
     def next(self):
         self._handled = True
-        self._handler(self.event)
+        result = self._handler(self)
+        return result
 
     def end(self):
         self._handled = True
@@ -25,5 +25,5 @@ class InterceptedAction:
         return self._handled
 
 
-class ActionInterceptor(Protocol):
-    def __call__(self, action: InterceptedAction): ...
+class HotkeyInterceptor(Protocol):
+    def __call__(self, action: InterceptedHotkey): ...

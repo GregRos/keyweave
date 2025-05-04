@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 import inspect
 
 
-from pykeys.bindings.interceptor import ActionInterceptor, InterceptedAction
+from pykeys.bindings.interceptor import HotkeyInterceptor, InterceptedHotkey
 from pykeys.commanding.event import InputEvent, HotkeyEvent
 from pykeys.commanding.handler import Handler
 from pykeys.key.hotkey import Hotkey
@@ -13,7 +13,7 @@ from pykeys.commanding.command import Command
 class Binding:
     hotkey: Hotkey
     handler: Handler
-    metadata: Command
+    command: Command
     _number_of_args: int = field(init=False)
 
     def __post_init__(self):
@@ -25,21 +25,21 @@ class Binding:
                 f"handler must accept 1 argument, got {self._number_of_args}"
             )
 
-    def intercept(self, *interceptors: ActionInterceptor):
+    def intercept(self, *interceptors: HotkeyInterceptor):
         handler = self.handler
         for interceptor in interceptors:
             handler = _wrap_interceptor(interceptor, handler)
-        return Binding(self.hotkey, handler, self.metadata)
+        return Binding(self.hotkey, handler, self.command)
 
     def __call__(self, event: InputEvent, /):
         handler = self.handler
-        triggered_key_event = HotkeyEvent(self.hotkey, event)
+        triggered_key_event = HotkeyEvent(self.hotkey, event, self.command)
         handler(triggered_key_event)
 
 
-def _wrap_interceptor(interceptor: ActionInterceptor, handler: Handler) -> Handler:
+def _wrap_interceptor(interceptor: HotkeyInterceptor, handler: Handler) -> Handler:
     def _handler(e: HotkeyEvent):
-        interception = InterceptedAction(e, handler)
+        interception = InterceptedHotkey(e, handler)
         interceptor(interception)
         if not interception.handled:
             raise ValueError(f"Interceptor {interceptor} did not handle {e}")

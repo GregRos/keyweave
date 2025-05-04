@@ -3,7 +3,7 @@ from typing import Iterable
 
 from pykeys.bindings.binding_collection import BindingCollection
 from pykeys.bindings.binding import Binding
-from pykeys.bindings.interceptor import ActionInterceptor
+from pykeys.bindings.interceptor import HotkeyInterceptor
 from pykeys.layout.key_hook import KeyHook
 from pykeys.schedulers.default import default_scheduler
 from pykeys.schedulers.scheduling import Scheduler
@@ -40,7 +40,7 @@ class Layout:
     def is_empty(self):
         return len(self._map) == 0
 
-    def intercept(self, interceptor: ActionInterceptor):
+    def intercept(self, interceptor: HotkeyInterceptor):
         return Layout(
             self.name,
             self._scheduler,
