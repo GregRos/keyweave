@@ -4,7 +4,7 @@ import inspect
 
 from pykeys.bindings.interceptor import HotkeyInterceptor, InterceptedHotkey
 from pykeys.commanding.event import InputEvent, HotkeyEvent
-from pykeys.commanding.handler import Handler
+from pykeys.commanding.handler import HotkeyHandler
 from pykeys.key.hotkey import Hotkey
 from pykeys.commanding.command import Command
 
@@ -12,9 +12,12 @@ from pykeys.commanding.command import Command
 @dataclass(match_args=True)
 class Binding:
     hotkey: Hotkey
-    handler: Handler
     command: Command
     _number_of_args: int = field(init=False)
+
+    @property
+    def handler(self) -> HotkeyHandler:
+        return self.command.handler
 
     def __post_init__(self):
         self._number_of_args = len(inspect.signature(self.handler).parameters)
@@ -29,7 +32,7 @@ class Binding:
         handler = self.handler
         for interceptor in interceptors:
             handler = _wrap_interceptor(interceptor, handler)
-        return Binding(self.hotkey, handler, self.command)
+        return Binding(self.hotkey, self.command)
 
     def __call__(self, event: InputEvent, /):
         handler = self.handler
@@ -37,7 +40,9 @@ class Binding:
         handler(triggered_key_event)
 
 
-def _wrap_interceptor(interceptor: HotkeyInterceptor, handler: Handler) -> Handler:
+def _wrap_interceptor(
+    interceptor: HotkeyInterceptor, handler: HotkeyHandler
+) -> HotkeyHandler:
     def _handler(e: HotkeyEvent):
         interception = InterceptedHotkey(e, handler)
         interceptor(interception)

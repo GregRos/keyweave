@@ -1,9 +1,9 @@
 from typing import Any, Callable, Protocol
 from pykeys.commanding.event import HotkeyEvent
-from pykeys.commanding.command import Command
+from pykeys.commanding.command import AbsCommand
 from pykeys.key.key import KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
-from pykeys.commanding.handler import Handler
+from pykeys.commanding.handler import HotkeyHandler
 from pykeys.key.hotkey import Hotkey
 from pykeys.bindings.interceptor import InterceptedHotkey
 
@@ -22,7 +22,7 @@ def hotkey(trigger: TriggerInput, modifiers: KeysInput = KeySet()):
     )
     combined_hotkey = combined_hotkey.with_modifiers(modifiers)
 
-    def decorate(func: InstHandler) -> Handler | InstHandler:
+    def decorate(func: InstHandler) -> HotkeyHandler | InstHandler:
         hotkeys: set[Hotkey] = func.__dict__.setdefault("hotkeys", set())
         hotkeys.add(combined_hotkey)
 
@@ -32,8 +32,8 @@ def hotkey(trigger: TriggerInput, modifiers: KeysInput = KeySet()):
 
 
 def command(label: str, description: str = ""):
-    def decorate[T: Handler | InstHandler](func: T) -> T:
-        func.__dict__["metadata"] = Command(label, description)
+    def decorate[T: HotkeyHandler | InstHandler](func: T) -> T:
+        func.__dict__["metadata"] = AbsCommand(label, description)
         return func
 
     return decorate
@@ -63,5 +63,5 @@ def is_interceptor(f: Callable[[], Any]) -> bool:
     return f.__dict__.get("intercepts", False)
 
 
-def get_func_metadata(f: Callable[[], Any]) -> Command:
-    return f.__dict__.get("metadata", Command("", ""))
+def get_func_metadata(f: Callable[[], Any]) -> AbsCommand:
+    return f.__dict__.get("metadata", AbsCommand("", ""))

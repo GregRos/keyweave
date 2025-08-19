@@ -28,7 +28,6 @@ def layout(name: str | None = None, scheduler: Scheduler | None = None):
             for trigger in hotkeys:
                 layout += Binding(
                     trigger,
-                    maybe_bind_self(handler, cls),
                     metadata,
                 )
         if layout.is_empty:
