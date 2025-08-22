@@ -4,7 +4,7 @@ import inspect
 
 from pykeys.bindings.interceptor import HotkeyInterceptor, InterceptedHotkey
 from pykeys.commanding.event import InputEvent, HotkeyEvent
-from pykeys.commanding.handler import HotkeyHandler
+from pykeys.commanding.handler import FuncHotkeyHandler
 from pykeys.key.hotkey import Hotkey
 from pykeys.commanding.command import Command
 
@@ -16,7 +16,7 @@ class Binding:
     _number_of_args: int = field(init=False)
 
     @property
-    def handler(self) -> HotkeyHandler:
+    def handler(self) -> FuncHotkeyHandler:
         return self.command.handler
 
     def __post_init__(self):
@@ -41,8 +41,8 @@ class Binding:
 
 
 def _wrap_interceptor(
-    interceptor: HotkeyInterceptor, handler: HotkeyHandler
-) -> HotkeyHandler:
+    interceptor: HotkeyInterceptor, handler: FuncHotkeyHandler
+) -> FuncHotkeyHandler:
     def _handler(e: HotkeyEvent):
         interception = InterceptedHotkey(e, handler)
         interceptor(interception)

@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Any, Iterable
 
 
 from pykeys.bindings.binding_collection import BindingCollection
@@ -6,13 +6,12 @@ from pykeys.bindings.binding import Binding
 from pykeys.bindings.interceptor import HotkeyInterceptor
 from pykeys.commanding.command import Command
 from pykeys.key.hotkey import Hotkey
+from pykeys.key.key import Key
 from pykeys.layout.key_hook import KeyHook
 from pykeys.schedulers.default import default_scheduler
 from pykeys.schedulers.scheduling import Scheduler
 
 
-# KEY | MODIFIERS
-#
 class Layout:
     _registered: list[KeyHook]
     _map: BindingCollection
@@ -87,11 +86,13 @@ class Layout:
             raise
         self._registered = key_hooks
 
-    def __exit__(self):
+    def __exit__(self, *args: Any):
         for hook in self._registered:
             hook.__exit__()
+        return False
 
     @staticmethod
-    def create(name: str, d: dict[Hotkey, Command]) -> "Layout":
-        xs = [Binding(k, v) for k, v in d.items()]
+    def create(name: str, d: dict[Hotkey | Key, Command]) -> "Layout":
+        clean_dict = {(k.down if isinstance(k, Key) else k): v for k, v in d.items()}
+        xs = [Binding(k, v) for k, v in clean_dict.items()]
         return Layout(name, bindings=xs)

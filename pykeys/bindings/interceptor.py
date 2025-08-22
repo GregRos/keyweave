@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from typing import Protocol
 from pykeys.commanding.event import HotkeyEvent
-from pykeys.commanding.handler import HotkeyHandler
+from pykeys.commanding.handler import FuncHotkeyHandler
 
 
 @dataclass(init=False)
 class InterceptedHotkey(HotkeyEvent):
     _handled: bool = False
 
-    def __init__(self, event: HotkeyEvent, handler: HotkeyHandler):
+    def __init__(self, event: HotkeyEvent, handler: FuncHotkeyHandler):
         HotkeyEvent.__init__(self, event.hotkey, event.event, event.command)
         self._handler = handler
 

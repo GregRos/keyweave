@@ -1,24 +1,22 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from pykeys.commanding.handler import HotkeyHandler
+from pykeys.commanding.handler import FuncHotkeyHandler
 
 
 @dataclass
 class AbsCommand:
     label: str
-    description: str
-
-    def default(self, label: str | None = None, description: str | None = None):
-        return AbsCommand(
-            self.label or label or "", self.description or description or ""
-        )
-
-    def handle(self, handler: HotkeyHandler):
-        Command(self.label, self.label, handler)
+    description: str | None = field(default=None, kw_only=True)
+    emoji: str | None = field(default=None, kw_only=True)
 
 
 @dataclass
-class Command:
-    label: str
-    description: str
-    handler: HotkeyHandler
+class UnboundCommand(AbsCommand):
+
+    def handle(self, handler: FuncHotkeyHandler):
+        Command(label=self.label, description=self.description, handler=handler)
+
+
+@dataclass
+class Command(AbsCommand):
+    handler: FuncHotkeyHandler
