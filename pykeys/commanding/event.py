@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 import time
-from pykeys.commanding.command import Command
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pykeys.commanding.command import Command
 from pykeys.key.hotkey import Hotkey
 
 
@@ -13,4 +16,4 @@ class InputEvent:
 class HotkeyEvent:
     hotkey: Hotkey
     event: InputEvent
-    command: Command
+    command: "Command"

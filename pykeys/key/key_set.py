@@ -36,7 +36,7 @@ class KeySet:
         return KeySet(self.set | KeySet(other).set)
 
     @property
-    def specificity(self):
+    def specificity(self) -> int:
         return sum(key.specificity for key in self.set)
 
     def __iter__(self):

@@ -5,7 +5,7 @@ from pykeys.commanding.handler import FuncHotkeyHandler
 
 @dataclass
 class AbsCommand:
-    label: str
+    label: str | None
     description: str | None = field(default=None, kw_only=True)
     emoji: str | None = field(default=None, kw_only=True)
 

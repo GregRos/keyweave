@@ -57,5 +57,5 @@ class Hotkey:
         return repr(self)
 
     @property
-    def specificity(self):
+    def specificity(self) -> int:
         return self.trigger.specificity + self.modifiers.specificity

@@ -6,21 +6,25 @@
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/example/messing_with_keys.py",
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     },
     {
       "name": "Python: set_hooks",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/example/set_hooks.py",
-      "console": "integratedTerminal"
+      "program": "${workspaceFolder}\\example\\set_hooks.py",
+      "console": "integratedTerminal",
+      "python": "${command:python.interpreterPath}",
+      "internalConsoleOptions": "neverOpen"
     },
     {
       "name": "Python: class",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/example/class.py",
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }
