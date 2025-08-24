@@ -1,3 +1,4 @@
+from curses.ascii import ismeta
 import inspect
 from typing import Any
 
@@ -10,19 +11,26 @@ from pykeys.layout.layout import Layout
 def commandx[T: None | Layout](
     label: str | None = None, description: str | None = None
 ):
-    class commandx:
+    class commandx(Command):
         def __init__(self, func: HotkeyHandler):
             self.func = func
+            super().__init__(
+                label or func.__qualname__, self._call, description=description
+            )
 
-        def _make(self, instance: T | None):
-            sig = inspect.signature(self.func)
-            arg_count = len(sig.parameters)
+        def _call(self, event: HotkeyEvent, /):
+            if inspect.ismethod(self.func):
+                raise TypeError(
+                    f"Expected __get__ to be called when decorating instance method '{self.func.__qualname__}'"
+                )
+            return self.func(event)  # type: ignore
+
+        def _make(self, instance: T | None = None):
 
             def wrapper(event: HotkeyEvent, /) -> Any:
-                if arg_count == 1:
-                    return self.func(event)  # type: ignore
-                elif arg_count == 2:
-                    return self.func(instance, event)  # type: ignore
+                if inspect.ismethod(self.func):
+                    return self.func.__get__(instance)(event)
+                return self.func(event)  # type: ignore
 
             _label = label or self.func.__qualname__
             return Command(_label, wrapper, description=description)
