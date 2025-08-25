@@ -13,9 +13,14 @@ class CommandDecorator[T]:
 
     def _make(self, instance: T | None = None):
         def wrapper(event: HotkeyEvent, /) -> Any:
-            if inspect.ismethod(self.func):
-                return self.func.__get__(instance)(event)
-            return self.func(event)  # type: ignore
+            arg_count = len(inspect.signature(self.func).parameters)
+            match arg_count:
+                case 1:
+                    return self.func(event)  # type: ignore
+                case 2:
+                    return self.func.__get__(instance)(event)  # type: ignore
+                case _:
+                    raise ValueError("Invalid number of arguments")
 
         return Command(
             label=self.cmd.label or self.func.__qualname__,
@@ -40,7 +45,7 @@ def resolve_command(
     return cmd
 
 
-def commandx[T](label: str | None = None, description: str | None = None):
+def command[T](label: str | None = None, description: str | None = None):
 
     def deco(func: HotkeyHandler):
         return CommandDecorator[T](

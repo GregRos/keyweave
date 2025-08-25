@@ -1,6 +1,6 @@
 from time import sleep
 from pykeys import key
-from pykeys.commanding.decorator import commandx
+from pykeys.commanding.decorator import command
 from pykeys.commanding.event import HotkeyEvent
 from pykeys.layout.layout import Layout
 from pykeys.schedulers.default import default_scheduler
@@ -10,12 +10,12 @@ def on_error(e: BaseException):
     print(f"Error: {e}")
 
 
-@commandx(label="xyz", description="abc")
+@command(label="xyz", description="abc")
 def xyz(e: HotkeyEvent):
     print(f"It happened: {e}")
 
 
-@commandx(label="xyz", description="abc")
+@command(label="xyz", description="abc")
 def abc(e: HotkeyEvent):
     print(f"abc: {e}")
 

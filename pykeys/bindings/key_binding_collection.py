@@ -1,5 +1,5 @@
 from pykeys.key.key import Key
-from pykeys.key.hotkey import Hotkey, HotkeyInfo, HotkeyInput, resolve_hotkey
+from pykeys.key.hotkey import HotkeyInfo, HotkeyInput, resolve_hotkey
 from pykeys.bindings.binding import Binding
 
 

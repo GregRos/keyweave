@@ -3,7 +3,7 @@ from pykeys.commanding.event import HotkeyEvent
 from pykeys.key.key import KeyInput
 
 from pykeys.key.hotkey import Hotkey
-from pykeys.bindings.interceptor import InterceptedHotkey
+from pykeys.bindings.interceptor import HotkeyInterceptionEvent
 
 
 type TriggerInput = "Hotkey | KeyInput"
@@ -16,7 +16,9 @@ class InstHandler(Protocol):
 
 class InstActionInterceptor(Protocol):
 
-    def __call__(self, other_self: Any, action: InterceptedHotkey, /) -> Any: ...
+    def __call__(
+        self, other_self: Any, action: HotkeyInterceptionEvent, /
+    ) -> Any: ...
 
 
 def intercepts():

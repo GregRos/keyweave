@@ -2,7 +2,10 @@ from dataclasses import dataclass, field
 import inspect
 
 
-from pykeys.bindings.interceptor import HotkeyInterceptor, InterceptedHotkey
+from pykeys.bindings.interceptor import (
+    HotkeyInterceptor,
+    HotkeyInterceptionEvent,
+)
 from pykeys.commanding.event import InputEvent, HotkeyEvent
 from pykeys.commanding.handler import FuncHotkeyHandler
 from pykeys.key.hotkey import HotkeyInfo
@@ -32,7 +35,15 @@ class Binding:
         handler = self.handler
         for interceptor in interceptors:
             handler = _wrap_interceptor(interceptor, handler)
-        return Binding(self.hotkey, self.command)
+        return Binding(
+            self.hotkey,
+            Command(
+                label=self.command.label,
+                description=self.command.description,
+                handler=handler,
+                emoji=self.command.emoji,
+            ),
+        )
 
     def __call__(self, event: InputEvent, /):
         handler = self.handler
@@ -44,7 +55,7 @@ def _wrap_interceptor(
     interceptor: HotkeyInterceptor, handler: FuncHotkeyHandler
 ) -> FuncHotkeyHandler:
     def _handler(e: HotkeyEvent):
-        interception = InterceptedHotkey(e, handler)
+        interception = HotkeyInterceptionEvent(e, handler)
         interceptor(interception)
         if not interception.handled:
             raise ValueError(f"Interceptor {interceptor} did not handle {e}")

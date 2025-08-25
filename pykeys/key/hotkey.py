@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from pykeys.key.key import Key, KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
@@ -7,6 +7,8 @@ from pykeys.key.key_event_type import KeyEventType, TriggerTypeName
 
 if TYPE_CHECKING:
     from pykeys.commanding.command import Command
+    from pykeys.commanding.decorator import CommandDecorator
+    from pykeys.bindings.binding import Binding
 
 
 @dataclass(order=True, eq=True, frozen=True, unsafe_hash=True)
@@ -53,8 +55,16 @@ class Hotkey:
     def is_down(self) -> bool:
         return self.info.type == "down"
 
-    def __call__(self, handler: "Command"):
-        return handler.bind(self)
+    def __call__(self, handler: "Command | CommandDecorator[Any]"):
+        from pykeys.commanding.decorator import resolve_command
+
+        hk = self
+
+        class BindInstance:
+            def __get__(self, instance: object, owner: type) -> "Binding":
+                return resolve_command(handler, instance).bind(hk)
+
+        return BindInstance()
 
     @property
     def is_up(self) -> bool:

@@ -2,7 +2,7 @@ from abc import ABC
 from functools import partial
 
 from pykeys.bindings.binding import Binding
-from pykeys.bindings.interceptor import InterceptedHotkey
+from pykeys.bindings.interceptor import HotkeyInterceptionEvent
 from pykeys.commanding.command import AbsCommand
 from pykeys.layout.layout import Layout
 from pykeys.schedulers.scheduling import Scheduler
@@ -10,10 +10,12 @@ from pykeys.schedulers.scheduling import Scheduler
 
 class LayoutClass(ABC):
 
-    def __intercept__(self, intercepted: InterceptedHotkey):
+    def __intercept__(self, intercepted: HotkeyInterceptionEvent):
         pass
 
-    def __new__(cls, name: str | None = None, scheduler: Scheduler | None = None):
+    def __new__(
+        cls, name: str | None = None, scheduler: Scheduler | None = None
+    ):
         obj = super().__new__(cls)
         layout = Layout(name or cls.__name__, scheduler=scheduler)
         for key in cls.__dict__.keys():

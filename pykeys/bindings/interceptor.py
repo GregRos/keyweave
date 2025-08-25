@@ -5,7 +5,7 @@ from pykeys.commanding.handler import FuncHotkeyHandler
 
 
 @dataclass(init=False)
-class InterceptedHotkey(HotkeyEvent):
+class HotkeyInterceptionEvent(HotkeyEvent):
     _handled: bool = False
 
     def __init__(self, event: HotkeyEvent, handler: FuncHotkeyHandler):
@@ -26,4 +26,4 @@ class InterceptedHotkey(HotkeyEvent):
 
 
 class HotkeyInterceptor(Protocol):
-    def __call__(self, action: InterceptedHotkey): ...
+    def __call__(self, action: HotkeyInterceptionEvent): ...
