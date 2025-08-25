@@ -1,22 +1,16 @@
-from typing import Any, Iterable, Protocol, runtime_checkable
+from typing import Any, Iterable
 
 
 from pykeys.bindings.binding_collection import BindingCollection
 from pykeys.bindings.binding import Binding
 from pykeys.bindings.interceptor import HotkeyInterceptor
 from pykeys.commanding.command import Command
+from pykeys.commanding.decorator import CommandDecorator, resolve_command
 from pykeys.key.hotkey import Hotkey
 from pykeys.key.key import Key
 from pykeys.layout.key_hook import KeyHook
 from pykeys.schedulers.default import default_scheduler
 from pykeys.schedulers.scheduling import Scheduler
-
-
-@runtime_checkable
-class CommandGetter(Protocol):
-    def __get__(
-        self, instance: Any, owner: type[Any] | None = None
-    ) -> Command: ...
 
 
 class Layout:
@@ -101,13 +95,11 @@ class Layout:
 
     @staticmethod
     def create(
-        name: str, d: dict[Hotkey | Key, Command | CommandGetter]
+        name: str, d: dict[Hotkey | Key, Command | CommandDecorator[Any]]
     ) -> "Layout":
         clean_dict = {
-            (k.down if isinstance(k, Key) else k): (
-                v.__get__(None) if isinstance(v, CommandGetter) else v
-            )
+            (k.down if isinstance(k, Key) else k): (resolve_command(v))
             for k, v in d.items()
         }
-        xs = [Binding(k, v) for k, v in clean_dict.items()]
+        xs = [Binding(k.info, v) for k, v in clean_dict.items()]
         return Layout(name, bindings=xs)

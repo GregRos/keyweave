@@ -1,7 +1,7 @@
 from typing import Any, Iterable, Iterator, overload
 
 from pykeys.key.key import Key
-from pykeys.key.hotkey import Hotkey
+from pykeys.key.hotkey import Hotkey, HotkeyInfo
 from pykeys.bindings.binding import Binding
 from pykeys.bindings.key_binding_collection import KeyBindingCollection
 
@@ -16,7 +16,9 @@ class BindingCollection(Iterable[KeyBindingCollection]):
     def __add__(self, input: Binding):
         trigger_key = input.hotkey.trigger
         new_map = self._map.copy()
-        trigger_collection = new_map.get(trigger_key, KeyBindingCollection(trigger_key))
+        trigger_collection = new_map.get(
+            trigger_key, KeyBindingCollection(trigger_key)
+        )
         trigger_collection = trigger_collection.set(input)
         new_map[trigger_key] = trigger_collection
         return BindingCollection(new_map)
@@ -39,12 +41,16 @@ class BindingCollection(Iterable[KeyBindingCollection]):
     @overload
     def __getitem__(self, key: Hotkey) -> Binding: ...
 
-    def __getitem__(self, key: Key | Hotkey) -> KeyBindingCollection | Binding:
+    def __getitem__(
+        self, key: Key | HotkeyInfo | Hotkey
+    ) -> KeyBindingCollection | Binding:
         match key:
+            case HotkeyInfo():
+                return self._map[key.trigger][key]
             case Key():
                 return self._map[key]
             case Hotkey():
-                return self._map[key.trigger][key]
+                return self._map[key.info.trigger][key]
 
     def __iter__(self) -> Iterator[KeyBindingCollection]:
         return iter(self._map.values())

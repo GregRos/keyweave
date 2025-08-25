@@ -1,6 +1,11 @@
 from dataclasses import dataclass
 from functools import total_ordering
+from typing import TYPE_CHECKING
 
+from pykeys.key.key_event_type import KeyEventType
+
+if TYPE_CHECKING:
+    from key_set import KeySet
 type KeyInput = "str | Key"
 
 
@@ -43,17 +48,21 @@ class Key:
 
         return KeySet({self, other})
 
+    def __and__(self, other: "Key | KeySet"):
+
+        return self.down.modifiers(other)
+
     @property
     def down(self):
-        from pykeys.key.hotkey import Hotkey
+        from pykeys.key.hotkey import Hotkey, HotkeyInfo
 
-        return Hotkey(self, "down")
+        return Hotkey(HotkeyInfo(trigger=self, type=KeyEventType("down")))
 
     @property
     def up(self):
-        from pykeys.key.hotkey import Hotkey
+        from pykeys.key.hotkey import Hotkey, HotkeyInfo
 
-        return Hotkey(self, "up")
+        return Hotkey(HotkeyInfo(trigger=self, type=KeyEventType("up")))
 
     def __repr__(self) -> str:
         return f"[{self.id}]"

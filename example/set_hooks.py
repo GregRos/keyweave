@@ -1,5 +1,3 @@
-import os
-import sys
 from time import sleep
 from pykeys import key
 from pykeys.commanding.decorator import commandx
@@ -23,6 +21,8 @@ def abc(e: HotkeyEvent):
 
 
 scheduler = default_scheduler(on_error)
-lt = Layout.create("my_layout", {key.num_1: xyz, key.num_2: abc})
+lt = Layout.create(
+    "my_layout", {key.a & key.alt + key.ctrl: xyz, key.num_2: abc}
+)
 with lt:
     sleep(1000)

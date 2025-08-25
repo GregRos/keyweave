@@ -5,13 +5,13 @@ import inspect
 from pykeys.bindings.interceptor import HotkeyInterceptor, InterceptedHotkey
 from pykeys.commanding.event import InputEvent, HotkeyEvent
 from pykeys.commanding.handler import FuncHotkeyHandler
-from pykeys.key.hotkey import Hotkey
+from pykeys.key.hotkey import HotkeyInfo
 from pykeys.commanding.command import Command
 
 
 @dataclass(match_args=True)
 class Binding:
-    hotkey: Hotkey
+    hotkey: HotkeyInfo
     command: Command
     _number_of_args: int = field(init=False)
 

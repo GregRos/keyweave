@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 
 from pykeys.commanding.handler import FuncHotkeyHandler
+from pykeys.key.hotkey import Hotkey
 
 
 @dataclass
@@ -20,3 +21,8 @@ class UnboundCommand(AbsCommand):
 @dataclass
 class Command(AbsCommand):
     handler: FuncHotkeyHandler
+
+    def bind(self, hotkey: Hotkey):
+        from ..bindings.binding import Binding
+
+        return Binding(hotkey.info, self)

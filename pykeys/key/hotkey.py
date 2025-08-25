@@ -1,51 +1,29 @@
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
+
 from pykeys.key.key import Key, KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
 from pykeys.key.key_event_type import KeyEventType, TriggerTypeName
 
+if TYPE_CHECKING:
+    from pykeys.commanding.command import Command
 
-class Hotkey:
+
+@dataclass(order=True, eq=True, frozen=True, unsafe_hash=True)
+class HotkeyInfo:
     __match_args__ = ("key", "type", "modifiers")
     trigger: Key
     type: KeyEventType
-    modifiers: KeySet
+    modifiers: KeySet = field(default=KeySet())
+    passthrough: bool = field(default=False, compare=False)
 
-    def __init__(
-        self,
-        key: KeyInput,
-        type: TriggerTypeName | KeyEventType,
-        modifiers: KeysInput = set(),
-    ):
-        self.trigger = Key(key)
-        self.type = KeyEventType(type)
-        self.modifiers = KeySet(modifiers)
+    @property
+    def specificity(self) -> int:
+        return self.trigger.specificity + self.modifiers.specificity
 
     @property
     def trigger_label(self) -> str:
         return f"{self.type.char} {self.trigger}"
-
-    def __hash__(self) -> int:
-        return hash((self.trigger, self.type, self.modifiers))
-
-    @property
-    def is_down(self) -> bool:
-        return self.type == "down"
-
-    @property
-    def is_up(self) -> bool:
-        return self.type == "up"
-
-    def __lt__(self, other: "Hotkey") -> bool:
-        return (self.trigger, self.type, self.modifiers) < (
-            other.trigger,
-            other.type,
-            other.modifiers,
-        )
-
-    def __and__(self, other: KeysInput):
-        return self.with_modifiers(other)
-
-    def with_modifiers(self, modifiers: KeysInput):
-        return Hotkey(self.trigger, self.type, self.modifiers + modifiers)
 
     def __repr__(self) -> str:
         if not self.modifiers:
@@ -56,6 +34,52 @@ class Hotkey:
     def __str__(self) -> str:
         return repr(self)
 
+
+@dataclass(order=True, eq=True, frozen=True, unsafe_hash=True)
+class Hotkey:
+    info: HotkeyInfo
+
+    def passthrough(self, enable: bool = True):
+        return Hotkey(
+            HotkeyInfo(
+                trigger=self.info.trigger,
+                type=self.info.type,
+                modifiers=self.info.modifiers,
+                passthrough=enable,
+            )
+        )
+
     @property
-    def specificity(self) -> int:
-        return self.trigger.specificity + self.modifiers.specificity
+    def is_down(self) -> bool:
+        return self.info.type == "down"
+
+    def __call__(self, handler: "Command"):
+        return handler.bind(self)
+
+    @property
+    def is_up(self) -> bool:
+        return self.info.type == "up"
+
+    def __and__(self, other: KeysInput):
+        return self.modifiers(other)
+
+    def modifiers(self, modifiers: KeysInput):
+        return Hotkey(
+            HotkeyInfo(
+                trigger=self.info.trigger,
+                type=self.info.type,
+                modifiers=self.info.modifiers + modifiers,
+                passthrough=self.info.passthrough,
+            )
+        )
+
+
+type HotkeyInput = Hotkey | HotkeyInfo
+
+
+def resolve_hotkey(input: HotkeyInput, /) -> HotkeyInfo:
+    match input:
+        case HotkeyInfo():
+            return input
+        case Hotkey():
+            return input.info

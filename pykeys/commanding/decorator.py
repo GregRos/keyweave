@@ -23,8 +23,21 @@ class CommandDecorator[T]:
             handler=wrapper,
         )
 
-    def __get__(self, instance: T | None, owner: type[T] | None = None):
+    def __get__(
+        self, instance: T | None, owner: type[T] | None = None
+    ) -> Command:
         return self._make(instance)
+
+
+type CommandOrDecorator = Command | CommandDecorator[Any]
+
+
+def resolve_command(
+    cmd: CommandOrDecorator, instance: object | None = None
+) -> Command:
+    if isinstance(cmd, CommandDecorator):
+        return cmd.__get__(instance, type(instance) if instance else None)
+    return cmd
 
 
 def commandx[T](label: str | None = None, description: str | None = None):
