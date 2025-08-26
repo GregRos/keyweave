@@ -38,10 +38,8 @@ class Binding:
         return Binding(
             self.hotkey,
             Command(
-                label=self.command.label,
-                description=self.command.description,
+                info=self.command.info,
                 handler=handler,
-                emoji=self.command.emoji,
             ),
         )
 

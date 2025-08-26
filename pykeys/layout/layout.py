@@ -4,8 +4,7 @@ from typing import Any, Iterable
 from pykeys.bindings.binding_collection import BindingCollection
 from pykeys.bindings.binding import Binding
 from pykeys.bindings.interceptor import HotkeyInterceptor
-from pykeys.commanding.command import Command
-from pykeys.commanding.decorator import CommandDecorator, resolve_command
+from pykeys.commanding.command import Command, CommandProducer, resolve_command
 from pykeys.key.hotkey import Hotkey
 from pykeys.key.key import Key
 from pykeys.layout.key_hook import KeyHook
@@ -95,11 +94,13 @@ class Layout:
 
     @staticmethod
     def create(
-        name: str, d: dict[Hotkey | Key, Command | CommandDecorator[Any]]
+        name: str, d: dict[Hotkey | Key, Command | CommandProducer]
     ) -> "Layout":
         clean_dict = {
-            (k.down if isinstance(k, Key) else k): (resolve_command(v))
-            for k, v in d.items()
+            (k.down if isinstance(k, Key) else k): v for k, v in d.items()
         }
-        xs = [Binding(k.info, v) for k, v in clean_dict.items()]
+        xs = [
+            Binding(k.info, resolve_command(v, None))
+            for k, v in clean_dict.items()
+        ]
         return Layout(name, bindings=xs)

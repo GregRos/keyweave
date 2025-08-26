@@ -1,6 +1,6 @@
 from time import sleep
 from pykeys import key
-from pykeys.commanding.decorator import command
+from pykeys.commanding.command import command
 from pykeys.commanding.event import HotkeyEvent
 from pykeys.layout.layout import Layout
 from pykeys.schedulers.default import default_scheduler

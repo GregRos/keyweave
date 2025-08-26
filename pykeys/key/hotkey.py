@@ -1,13 +1,13 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
-from pykeys.key.key import Key, KeyInput
+from pykeys.commanding.command import CommandProducer, resolve_command
+from pykeys.key.key import Key
 from pykeys.key.key_set import KeySet, KeysInput
-from pykeys.key.key_event_type import KeyEventType, TriggerTypeName
+from pykeys.key.key_event_type import KeyEventType
 
 if TYPE_CHECKING:
     from pykeys.commanding.command import Command
-    from pykeys.commanding.decorator import CommandDecorator
     from pykeys.bindings.binding import Binding
 
 
@@ -37,6 +37,17 @@ class HotkeyInfo:
         return repr(self)
 
 
+@dataclass
+class BindingProducer:
+    cmd: "Command | CommandProducer"
+    hotkey: "Hotkey"
+
+    def __get__(self, instance: object, owner: type) -> "Binding":
+        r_cmd = resolve_command(self.cmd, instance)
+
+        return r_cmd.bind(self.hotkey)
+
+
 @dataclass(order=True, eq=True, frozen=True, unsafe_hash=True)
 class Hotkey:
     info: HotkeyInfo
@@ -55,16 +66,9 @@ class Hotkey:
     def is_down(self) -> bool:
         return self.info.type == "down"
 
-    def __call__(self, handler: "Command | CommandDecorator[Any]"):
-        from pykeys.commanding.decorator import resolve_command
+    def __call__(self, cmd: "Command | CommandProducer"):
 
-        hk = self
-
-        class BindInstance:
-            def __get__(self, instance: object, owner: type) -> "Binding":
-                return resolve_command(handler, instance).bind(hk)
-
-        return BindInstance()
+        return BindingProducer(cmd, self)
 
     @property
     def is_up(self) -> bool:
@@ -93,3 +97,7 @@ def resolve_hotkey(input: HotkeyInput, /) -> HotkeyInfo:
             return input
         case Hotkey():
             return input.info
+
+
+def hotkey(hotkey: Hotkey):
+    return hotkey

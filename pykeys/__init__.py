@@ -5,7 +5,7 @@ from pykeys.key.key_event_type import KeyEventType, TriggerTypeName
 from pykeys.key.hotkey import Hotkey
 from pykeys.commanding.handler import FuncHotkeyHandler
 from pykeys.commanding.event import HotkeyEvent
-from pykeys.commanding.command import AbsCommand
+from pykeys.commanding.command import CommandInfo
 
 from pykeys.layout.layout import Layout
 from pykeys.schedulers.scheduling import Scheduler

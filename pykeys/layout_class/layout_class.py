@@ -3,7 +3,7 @@ from functools import partial
 
 from pykeys.bindings.binding import Binding
 from pykeys.bindings.interceptor import HotkeyInterceptionEvent
-from pykeys.commanding.command import AbsCommand
+from pykeys.commanding.command import CommandInfo
 from pykeys.layout.layout import Layout
 from pykeys.schedulers.scheduling import Scheduler
 
@@ -25,7 +25,7 @@ class LayoutClass(ABC):
             match binding:
                 case Binding() as b:
                     layout.add_binding(b)
-                case AbsCommand() as c:
+                case CommandInfo() as c:
                     raise TypeError(f"Found unbound command: {c}")
                 case _:
                     pass
