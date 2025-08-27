@@ -3,7 +3,7 @@ from pykeys.commanding.event import HotkeyEvent
 from pykeys.key.key import KeyInput
 
 from pykeys.key.hotkey import Hotkey
-from pykeys.bindings.interceptor import HotkeyInterceptionEvent
+from pykeys.bindings.bindings import HotkeyInterceptionEvent
 
 
 type TriggerInput = "Hotkey | KeyInput"

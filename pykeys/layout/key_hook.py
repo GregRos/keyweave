@@ -1,6 +1,6 @@
 import threading
 from typing import Any
-from pykeys.bindings.key_binding_collection import KeyBindingCollection
+from pykeys.bindings.bindings import KeyBindingCollection
 from pykeys.commanding.event import InputEvent
 from pykeys.key.key import Key
 
@@ -29,7 +29,9 @@ class KeyHook:
 
     def __enter__(self):
         self._internal_handler = hook_key(
-            _get_keyboard_hook_id(self.key), self.manufactured_handler, suppress=True
+            _get_keyboard_hook_id(self.key),
+            self.manufactured_handler,
+            suppress=True,
         )
         return self
 

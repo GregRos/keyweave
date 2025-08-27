@@ -22,7 +22,7 @@ class Command:
     handler: FuncHotkeyHandler
 
     def bind(self, hotkey: "Hotkey"):
-        from ..bindings.binding import Binding
+        from ..bindings.bindings import Binding
 
         return Binding(hotkey.info, self)
 

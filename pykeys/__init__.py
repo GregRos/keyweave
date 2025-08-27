@@ -12,7 +12,3 @@ from pykeys.schedulers.scheduling import Scheduler
 from pykeys.schedulers.threadpool import ThreadPoolScheduler
 
 from pykeys.layout_class.decorators import intercepts
-from pykeys.bindings.interceptor import (
-    HotkeyInterceptionEvent,
-    HotkeyInterceptor,
-)

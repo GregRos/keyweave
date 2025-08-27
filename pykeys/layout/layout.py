@@ -1,9 +1,8 @@
 from typing import Any, Iterable
 
 
-from pykeys.bindings.binding_collection import BindingCollection
-from pykeys.bindings.binding import Binding
-from pykeys.bindings.interceptor import HotkeyInterceptor
+from pykeys.bindings.bindings import BindingCollection, HotkeyInterceptor
+from pykeys.bindings.bindings import Binding
 from pykeys.commanding.command import Command, CommandProducer, resolve_command
 from pykeys.key.hotkey import Hotkey
 from pykeys.key.key import Key

@@ -3,7 +3,7 @@ import sys
 from time import sleep
 
 from pykeys import key
-from pykeys.bindings.interceptor import HotkeyInterceptionEvent
+from pykeys.bindings.bindings import HotkeyInterceptionEvent
 
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

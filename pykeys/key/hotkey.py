@@ -8,7 +8,7 @@ from pykeys.key.key_event_type import KeyEventType
 
 if TYPE_CHECKING:
     from pykeys.commanding.command import Command
-    from pykeys.bindings.binding import Binding
+    from pykeys.bindings.bindings import Binding
 
 
 @dataclass(order=True, eq=True, frozen=True, unsafe_hash=True)
