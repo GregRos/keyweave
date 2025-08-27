@@ -79,14 +79,6 @@ class Hotkey:
 type HotkeyInput = Hotkey | HotkeyInfo
 
 
-def resolve_hotkey(input: HotkeyInput, /) -> HotkeyInfo:
-    match input:
-        case HotkeyInfo():
-            return input
-        case Hotkey():
-            return input.info
-
-
 @dataclass
 class InputEvent:
     timestamp: float | None = None

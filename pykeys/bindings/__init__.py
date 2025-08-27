@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 import inspect
-from typing import Any, Iterable, Iterator, Protocol, overload
+from typing import Any, Iterable, Iterator, overload
 
 from pykeys.commanding import (
     Command,
@@ -108,9 +108,8 @@ class KeyBindingCollection:
         self._map = bindings
 
     def __getitem__(self, key: HotkeyInput) -> Binding:
-        from ..hotkey import resolve_hotkey
 
-        return self._map[resolve_hotkey(key)]
+        return self._map[_resolve_hotkey(key)]
 
     def set(self, binding: Binding):
         return KeyBindingCollection(
@@ -136,3 +135,11 @@ class BindingProducer:
         r_cmd = resolve_command(self.cmd, instance)
 
         return r_cmd.bind(self.hotkey)
+
+
+def _resolve_hotkey(input: HotkeyInput, /) -> HotkeyInfo:
+    match input:
+        case HotkeyInfo():
+            return input
+        case Hotkey():
+            return input.info

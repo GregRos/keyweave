@@ -74,7 +74,7 @@ class Layout:
         ]
 
     def __enter__(self):
-        from .print_layout import print_layout_table
+        from ._print_layout import print_layout_table
 
         print(f"➡️ {print_layout_table(self)}")
         key_hooks = self._get_key_hooks()

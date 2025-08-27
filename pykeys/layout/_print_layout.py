@@ -7,7 +7,7 @@ import re
 from beautifultable import BeautifulTable, ALIGN_LEFT
 
 
-from pykeys._layout.layout import Layout
+from pykeys.layout._layout import Layout
 
 
 def _get_magic_marker(inner: str):

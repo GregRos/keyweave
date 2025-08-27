@@ -4,18 +4,16 @@ from time import sleep
 
 from pykeys import (
     key,
-    HotkeyEvent,
     LayoutClass,
-    command,
 )
+from pykeys.commanding import command
+from pykeys.hotkey import HotkeyEvent
 from pykeys.interception import HotkeyInterceptionEvent
+from pykeys.layout import LayoutClass
 
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 )
-
-
-from pykeys._layout_class import LayoutClass
 
 
 class AsddBC(LayoutClass):

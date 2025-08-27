@@ -1,14 +1,13 @@
-from typing import Any, Protocol
 from pykeys.interception import HotkeyInterceptionEvent
 from pykeys.key_types import KeyInput
 
-from pykeys.hotkey import Hotkey, HotkeyEvent
+from pykeys.hotkey import Hotkey
 from abc import ABC
 from functools import partial
 
 from pykeys.bindings import Binding
 from pykeys.commanding import CommandInfo
-from pykeys._layout.layout import Layout
+from pykeys.layout._layout import Layout
 from pykeys.scheduling import Scheduler
 
 
@@ -40,15 +39,3 @@ class LayoutClass(ABC):
 
 
 type TriggerInput = "Hotkey | KeyInput"
-
-
-class InstHandler(Protocol):
-
-    def __call__(self, other_self: Any, event: HotkeyEvent, /) -> Any: ...
-
-
-class InstActionInterceptor(Protocol):
-
-    def __call__(
-        self, other_self: Any, action: HotkeyInterceptionEvent, /
-    ) -> Any: ...
