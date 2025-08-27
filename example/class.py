@@ -10,8 +10,7 @@ sys.path.insert(
 )
 
 
-from pykeys.commanding.command import command
-from pykeys.commanding.event import HotkeyEvent
+from pykeys.commanding import command, HotkeyEvent
 
 
 from pykeys.layout_class.layout_class import LayoutClass

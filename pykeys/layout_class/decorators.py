@@ -1,5 +1,5 @@
 from typing import Any, Protocol
-from pykeys.commanding.event import HotkeyEvent
+from pykeys.commanding import HotkeyEvent
 from pykeys.key.key import KeyInput
 
 from pykeys.key.hotkey import Hotkey

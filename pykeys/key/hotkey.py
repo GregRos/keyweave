@@ -1,13 +1,13 @@
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
-from pykeys.commanding.command import CommandProducer, resolve_command
+from pykeys.commanding import CommandProducer, resolve_command
 from pykeys.key.key import Key
 from pykeys.key.key_set import KeySet, KeysInput
 from pykeys.key.key_event_type import KeyEventType
 
 if TYPE_CHECKING:
-    from pykeys.commanding.command import Command
+    from pykeys.commanding import Command
     from pykeys.bindings.bindings import Binding
 
 

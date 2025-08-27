@@ -2,7 +2,7 @@ from abc import ABC
 from functools import partial
 
 from pykeys.bindings.bindings import Binding, HotkeyInterceptionEvent
-from pykeys.commanding.command import CommandInfo
+from pykeys.commanding import CommandInfo
 from pykeys.layout.layout import Layout
 from pykeys.schedulers.scheduling import Scheduler
 

@@ -2,9 +2,12 @@ from dataclasses import dataclass, field
 import inspect
 from typing import TYPE_CHECKING, Any, Iterable, Iterator, Protocol, overload
 
-from pykeys.commanding.command import Command
-from pykeys.commanding.event import HotkeyEvent, InputEvent
-from pykeys.commanding.handler import FuncHotkeyHandler
+from pykeys.commanding import (
+    Command,
+    HotkeyEvent,
+    InputEvent,
+    FuncHotkeyHandler,
+)
 from pykeys.key.key import Key
 from pykeys.key.hotkey import Hotkey, HotkeyInfo, HotkeyInput
 
