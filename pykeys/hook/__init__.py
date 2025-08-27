@@ -112,12 +112,3 @@ def _is_pressed(key: Key):
 
 def _is_key_set_active(key_set: KeySet):
     return all(_is_pressed(key) for key in key_set)
-
-
-__all__ = [
-    "KeyHook",
-    "_get_keyboard_hook_id",
-    "_get_windows_id_for_mouse_key",
-    "_is_pressed",
-    "_is_key_set_active",
-]

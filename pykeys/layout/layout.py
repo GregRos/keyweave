@@ -6,7 +6,7 @@ from pykeys.bindings import Binding
 from pykeys.commanding import Command, CommandProducer, resolve_command
 from pykeys.hotkey import Hotkey
 from pykeys.key_types import Key
-from pykeys.hook.key_hook import KeyHook
+from pykeys.hook import KeyHook
 from pykeys.schedulers import default_scheduler, Scheduler
 
 
