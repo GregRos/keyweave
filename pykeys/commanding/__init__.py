@@ -3,9 +3,11 @@ import inspect
 import time
 from typing import Any, Protocol, TYPE_CHECKING
 
+from pykeys.hotkey import HotkeyEvent
+
 
 if TYPE_CHECKING:
-    from pykeys.key.hotkey import Hotkey, HotkeyInfo
+    from pykeys.hotkey import Hotkey, HotkeyInfo
 
 
 @dataclass(kw_only=True)
@@ -21,7 +23,7 @@ class Command:
     handler: "FuncHotkeyHandler"
 
     def bind(self, hotkey: "Hotkey"):
-        from ..bindings.bindings import Binding
+        from ..bindings import Binding
 
         return Binding(hotkey.info, self)
 
@@ -36,22 +38,6 @@ class MethodHotkeyHandler(Protocol):
 
 
 type HotkeyHandler = FuncHotkeyHandler | MethodHotkeyHandler
-
-
-@dataclass
-class InputEvent:
-    timestamp: float | None = None
-
-    def __post_init__(self):
-        if self.timestamp is None:
-            self.timestamp = time.time()
-
-
-@dataclass
-class HotkeyEvent:
-    hotkey: "HotkeyInfo"
-    event: InputEvent
-    command: Command
 
 
 class CommandProducer:

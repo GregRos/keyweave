@@ -2,7 +2,7 @@
 from pykeys.key.key import Key, KeyInput
 from pykeys.key.key_set import KeySet, KeysInput
 from pykeys.key.key_event_type import KeyEventType, TriggerTypeName
-from pykeys.key.hotkey import Hotkey
+from pykeys.hotkey import Hotkey
 from pykeys.commanding import FuncHotkeyHandler, HotkeyEvent, CommandInfo
 
 from pykeys.layout.layout import Layout

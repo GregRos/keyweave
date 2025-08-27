@@ -1,0 +1,187 @@
+from dataclasses import dataclass, field
+import inspect
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, Protocol, overload
+
+from pykeys.commanding import (
+    Command,
+    CommandProducer,
+    FuncHotkeyHandler,
+    resolve_command,
+)
+from pykeys.key.key import Key
+from pykeys.hotkey import (
+    Hotkey,
+    HotkeyEvent,
+    HotkeyInfo,
+    HotkeyInput,
+    InputEvent,
+)
+
+
+@dataclass(init=False)
+class HotkeyInterceptionEvent(HotkeyEvent):
+    _handled: bool = False
+
+    def __init__(self, event: HotkeyEvent, handler: FuncHotkeyHandler):
+        HotkeyEvent.__init__(self, event.hotkey, event.event, event.command)
+        self._handler = handler
+
+    def next(self):
+        self._handled = True
+        result = self._handler(self)
+        return result
+
+    def end(self):
+        self._handled = True
+
+    @property
+    def handled(self):
+        return self._handled
+
+
+class HotkeyInterceptor(Protocol):
+    def __call__(self, action: HotkeyInterceptionEvent): ...
+
+
+@dataclass(match_args=True)
+class Binding:
+    hotkey: HotkeyInfo
+    command: Command
+    _number_of_args: int = field(init=False)
+
+    @property
+    def handler(self) -> FuncHotkeyHandler:
+        return self.command.handler
+
+    def __post_init__(self):
+        self._number_of_args = len(inspect.signature(self.handler).parameters)
+        if not callable(self.handler):
+            raise ValueError(f"handler must be a callable, got {self.handler}")
+        if self._number_of_args != 1:
+            raise ValueError(
+                f"handler must accept 1 argument, got {self._number_of_args}"
+            )
+
+    def intercept(self, *interceptors: HotkeyInterceptor):
+        handler = self.handler
+        for interceptor in interceptors:
+            handler = _wrap_interceptor(interceptor, handler)
+        return Binding(
+            self.hotkey,
+            Command(
+                info=self.command.info,
+                handler=handler,
+            ),
+        )
+
+    def __call__(self, event: InputEvent, /):
+        handler = self.handler
+        triggered_key_event = HotkeyEvent(self.hotkey, event, self.command)
+        handler(triggered_key_event)
+
+
+def _wrap_interceptor(
+    interceptor: HotkeyInterceptor, handler: FuncHotkeyHandler
+) -> FuncHotkeyHandler:
+    def _handler(e: HotkeyEvent):
+        interception = HotkeyInterceptionEvent(e, handler)
+        interceptor(interception)
+        if not interception.handled:
+            raise ValueError(f"Interceptor {interceptor} did not handle {e}")
+
+    return _handler
+
+
+class BindingCollection(Iterable["KeyBindingCollection"]):
+    _map: dict[Key, "KeyBindingCollection"]
+    _handler_map: dict[Key, Any]
+
+    def __init__(self, input: dict[Key, "KeyBindingCollection"] = {}):
+        self._map = input
+
+    def __add__(self, input: Binding):
+        trigger_key = input.hotkey.trigger
+        new_map = self._map.copy()
+        trigger_collection = new_map.get(
+            trigger_key, KeyBindingCollection(trigger_key)
+        )
+        trigger_collection = trigger_collection.set(input)
+        new_map[trigger_key] = trigger_collection
+        return BindingCollection(new_map)
+
+    @property
+    def keys(self) -> set[Key]:
+        return set(self._map.keys())
+
+    @property
+    def bindings(self) -> Iterable[Binding]:
+        return (binding for collection in self for binding in collection)
+
+    @property
+    def pairs(self) -> Iterable[tuple[Key, "KeyBindingCollection"]]:
+        return self._map.items()
+
+    @overload
+    def __getitem__(self, key: Key) -> "KeyBindingCollection": ...
+
+    @overload
+    def __getitem__(self, key: Hotkey) -> Binding: ...
+
+    def __getitem__(
+        self, key: Key | HotkeyInfo | Hotkey
+    ) -> "KeyBindingCollection | Binding":
+        match key:
+            case HotkeyInfo():
+                return self._map[key.trigger][key]
+            case Key():
+                return self._map[key]
+            case Hotkey():
+                return self._map[key.info.trigger][key]
+
+    def __iter__(self) -> Iterator["KeyBindingCollection"]:
+        return iter(self._map.values())
+
+    def __len__(self) -> int:
+        return len(self._map)
+
+    def __repr__(self) -> str:
+        return repr(self._map)
+
+
+class KeyBindingCollection:
+    key: Key
+    _map: dict[HotkeyInfo, Binding]
+
+    def __init__(self, trigger: Key, bindings: dict[HotkeyInfo, Binding] = {}):
+        self.key = trigger
+        self._map = bindings
+
+    def __getitem__(self, key: HotkeyInput) -> Binding:
+        from ..hotkey import resolve_hotkey
+
+        return self._map[resolve_hotkey(key)]
+
+    def set(self, binding: Binding):
+        return KeyBindingCollection(
+            self.key, {**self._map, binding.hotkey: binding}
+        )
+
+    def __len__(self) -> int:
+        return len(self._map)
+
+    def __iter__(self) -> Iterator[Binding]:
+        return iter(self._map.values())
+
+    def __add__(self, binding: Binding):
+        return self.set(binding)
+
+
+@dataclass
+class BindingProducer:
+    cmd: "Command | CommandProducer"
+    hotkey: Hotkey
+
+    def __get__(self, instance: object, owner: type) -> "Binding":
+        r_cmd = resolve_command(self.cmd, instance)
+
+        return r_cmd.bind(self.hotkey)

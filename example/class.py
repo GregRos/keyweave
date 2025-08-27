@@ -3,14 +3,15 @@ import sys
 from time import sleep
 
 from pykeys import key
-from pykeys.bindings.bindings import HotkeyInterceptionEvent
+from pykeys.bindings import HotkeyInterceptionEvent
+from pykeys.hotkey import HotkeyEvent
 
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 )
 
 
-from pykeys.commanding import command, HotkeyEvent
+from pykeys.commanding import command
 
 
 from pykeys.layout_class.layout_class import LayoutClass

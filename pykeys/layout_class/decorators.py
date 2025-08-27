@@ -2,8 +2,8 @@ from typing import Any, Protocol
 from pykeys.commanding import HotkeyEvent
 from pykeys.key.key import KeyInput
 
-from pykeys.key.hotkey import Hotkey
-from pykeys.bindings.bindings import HotkeyInterceptionEvent
+from pykeys.hotkey import Hotkey
+from pykeys.bindings import HotkeyInterceptionEvent
 
 
 type TriggerInput = "Hotkey | KeyInput"

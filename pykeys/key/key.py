@@ -54,13 +54,13 @@ class Key:
 
     @property
     def down(self):
-        from pykeys.key.hotkey import Hotkey, HotkeyInfo
+        from pykeys.hotkey import Hotkey, HotkeyInfo
 
         return Hotkey(HotkeyInfo(trigger=self, type=KeyEventType("down")))
 
     @property
     def up(self):
-        from pykeys.key.hotkey import Hotkey, HotkeyInfo
+        from pykeys.hotkey import Hotkey, HotkeyInfo
 
         return Hotkey(HotkeyInfo(trigger=self, type=KeyEventType("up")))
 

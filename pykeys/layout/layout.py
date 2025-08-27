@@ -1,10 +1,10 @@
 from typing import Any, Iterable
 
 
-from pykeys.bindings.bindings import BindingCollection, HotkeyInterceptor
-from pykeys.bindings.bindings import Binding
+from pykeys.bindings import BindingCollection, HotkeyInterceptor
+from pykeys.bindings import Binding
 from pykeys.commanding import Command, CommandProducer, resolve_command
-from pykeys.key.hotkey import Hotkey
+from pykeys.hotkey import Hotkey
 from pykeys.key.key import Key
 from pykeys.layout.key_hook import KeyHook
 from pykeys.schedulers.default import default_scheduler
