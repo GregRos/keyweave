@@ -66,7 +66,7 @@ class Key:
         return 1
 
     def __add__(self, other: "Key"):
-        from pykeys._key_types import KeySet
+        from pykeys.key_types import KeySet
 
         return KeySet({self, other})
 
@@ -75,13 +75,13 @@ class Key:
 
     @property
     def down(self):
-        from pykeys._hotkey import Hotkey, HotkeyInfo
+        from pykeys.hotkey import Hotkey, HotkeyInfo
 
         return Hotkey(HotkeyInfo(trigger=self, type=KeyEventType("down")))
 
     @property
     def up(self):
-        from pykeys._hotkey import Hotkey, HotkeyInfo
+        from pykeys.hotkey import Hotkey, HotkeyInfo
 
         return Hotkey(HotkeyInfo(trigger=self, type=KeyEventType("up")))
 
@@ -150,13 +150,3 @@ class KeySet:
 
     def __str__(self) -> str:
         return repr(self)
-
-
-__all__ = [
-    "Key",
-    "KeySet",
-    "KeyInput",
-    "KeysInput",
-    "KeyEventType",
-    "TriggerTypeName",
-]

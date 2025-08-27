@@ -1,8 +1,8 @@
 import threading
 from typing import Any
-from pykeys._bindings import KeyBindingCollection
-from pykeys._hotkey import InputEvent
-from pykeys._key_types import Key, KeySet
+from pykeys.bindings import KeyBindingCollection
+from pykeys.hotkey import InputEvent
+from pykeys.key_types import Key, KeySet
 from keyboard import KeyboardEvent, hook_key, is_pressed, unhook
 
 from win32api import GetAsyncKeyState  # type: ignore

@@ -4,11 +4,11 @@ from time import sleep
 
 from pykeys import (
     key,
-    HotkeyInterceptionEvent,
     HotkeyEvent,
     LayoutClass,
     command,
 )
+from pykeys.interception import HotkeyInterceptionEvent
 
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

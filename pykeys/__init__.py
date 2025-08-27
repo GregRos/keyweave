@@ -1,5 +1,5 @@
 # pyright: reportUnusedImport=false
-from pykeys._key_types import (
+from pykeys.key_types import (
     Key,
     KeyInput,
     KeySet,
@@ -7,20 +7,19 @@ from pykeys._key_types import (
     KeyEventType,
     TriggerTypeName,
 )
-from pykeys._hotkey import (
+from pykeys.hotkey import (
     Hotkey,
     HotkeyEvent,
     HotkeyInfo,
     HotkeyInput,
 )
-from pykeys._commanding import (
+from pykeys.commanding import (
     Command,
     command,
     CommandInfo,
     CommandProducer,
     CommandOrProducer,
 )
-from pykeys._bindings import HotkeyInterceptionEvent
 from pykeys._layout_class import LayoutClass
 from pykeys._layout.layout import Layout
 from pykeys import scheduling
@@ -34,7 +33,6 @@ __all__ = [
     "KeysInput",
     "KeyEventType",
     "TriggerTypeName",
-    "HotkeyInterceptionEvent",
     "Hotkey",
     "HotkeyEvent",
     "HotkeyInfo",

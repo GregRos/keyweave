@@ -2,45 +2,20 @@ from dataclasses import dataclass, field
 import inspect
 from typing import Any, Iterable, Iterator, Protocol, overload
 
-from pykeys._commanding import (
+from pykeys.commanding import (
     Command,
     CommandProducer,
     FuncHotkeyHandler,
     resolve_command,
 )
-from pykeys._key_types import Key
-from pykeys._hotkey import (
+from pykeys.key_types import Key
+from pykeys.hotkey import (
     Hotkey,
     HotkeyEvent,
     HotkeyInfo,
     HotkeyInput,
     InputEvent,
 )
-
-
-@dataclass(init=False)
-class HotkeyInterceptionEvent(HotkeyEvent):
-    _handled: bool = False
-
-    def __init__(self, event: HotkeyEvent, handler: FuncHotkeyHandler):
-        HotkeyEvent.__init__(self, event.hotkey, event.event, event.command)
-        self._handler = handler
-
-    def next(self):
-        self._handled = True
-        result = self._handler(self)
-        return result
-
-    def end(self):
-        self._handled = True
-
-    @property
-    def handled(self):
-        return self._handled
-
-
-class HotkeyInterceptor(Protocol):
-    def __call__(self, action: HotkeyInterceptionEvent): ...
 
 
 @dataclass(match_args=True)
@@ -62,34 +37,10 @@ class Binding:
                 f"handler must accept 1 argument, got {self._number_of_args}"
             )
 
-    def intercept(self, *interceptors: HotkeyInterceptor):
-        handler = self.handler
-        for interceptor in interceptors:
-            handler = _wrap_interceptor(interceptor, handler)
-        return Binding(
-            self.hotkey,
-            Command(
-                info=self.command.info,
-                handler=handler,
-            ),
-        )
-
     def __call__(self, event: InputEvent, /):
         handler = self.handler
         triggered_key_event = HotkeyEvent(self.hotkey, event, self.command)
         handler(triggered_key_event)
-
-
-def _wrap_interceptor(
-    interceptor: HotkeyInterceptor, handler: FuncHotkeyHandler
-) -> FuncHotkeyHandler:
-    def _handler(e: HotkeyEvent):
-        interception = HotkeyInterceptionEvent(e, handler)
-        interceptor(interception)
-        if not interception.handled:
-            raise ValueError(f"Interceptor {interceptor} did not handle {e}")
-
-    return _handler
 
 
 class BindingCollection(Iterable["KeyBindingCollection"]):
@@ -157,7 +108,7 @@ class KeyBindingCollection:
         self._map = bindings
 
     def __getitem__(self, key: HotkeyInput) -> Binding:
-        from .._hotkey import resolve_hotkey
+        from ..hotkey import resolve_hotkey
 
         return self._map[resolve_hotkey(key)]
 

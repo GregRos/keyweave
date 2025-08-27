@@ -4,7 +4,7 @@ from typing import Any, Protocol, TYPE_CHECKING
 
 
 if TYPE_CHECKING:
-    from pykeys._hotkey import Hotkey, HotkeyEvent
+    from pykeys.hotkey import Hotkey, HotkeyEvent
 
 
 @dataclass(kw_only=True)
@@ -20,7 +20,7 @@ class Command:
     handler: "FuncHotkeyHandler"
 
     def bind(self, hotkey: "Hotkey"):
-        from .._bindings import Binding
+        from ..bindings import Binding
 
         return Binding(hotkey.info, self)
 

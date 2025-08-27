@@ -1,13 +1,13 @@
 from typing import Any, Protocol
-from pykeys._key_types import KeyInput
+from pykeys.interception import HotkeyInterceptionEvent
+from pykeys.key_types import KeyInput
 
-from pykeys._hotkey import Hotkey, HotkeyEvent
-from pykeys._bindings import HotkeyInterceptionEvent
+from pykeys.hotkey import Hotkey, HotkeyEvent
 from abc import ABC
 from functools import partial
 
-from pykeys._bindings import Binding, HotkeyInterceptionEvent
-from pykeys._commanding import CommandInfo
+from pykeys.bindings import Binding
+from pykeys.commanding import CommandInfo
 from pykeys._layout.layout import Layout
 from pykeys.scheduling import Scheduler
 

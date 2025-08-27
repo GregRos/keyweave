@@ -2,11 +2,11 @@ from dataclasses import dataclass, field
 import time
 from typing import TYPE_CHECKING
 
-from pykeys._commanding import CommandProducer
-from pykeys._key_types import Key, KeySet, KeysInput, KeyEventType
+from pykeys.commanding import CommandProducer
+from pykeys.key_types import Key, KeySet, KeysInput, KeyEventType
 
 if TYPE_CHECKING:
-    from pykeys._commanding import Command
+    from pykeys.commanding import Command
 
 
 @dataclass(order=True, eq=True, frozen=True, unsafe_hash=True)
@@ -54,7 +54,7 @@ class Hotkey:
         return self.info.type == "down"
 
     def __call__(self, cmd: "Command | CommandProducer"):
-        from .._bindings import BindingProducer
+        from ..bindings import BindingProducer
 
         return BindingProducer(cmd, self)
 

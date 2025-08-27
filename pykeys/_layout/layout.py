@@ -1,11 +1,12 @@
 from typing import Any, Iterable
 
 
-from pykeys._bindings import BindingCollection, HotkeyInterceptor
-from pykeys._bindings import Binding
-from pykeys._commanding import Command, CommandProducer, resolve_command
-from pykeys._hotkey import Hotkey
-from pykeys._key_types import Key
+from pykeys.bindings import BindingCollection
+from pykeys.bindings import Binding
+from pykeys.commanding import Command, CommandProducer, resolve_command
+from pykeys.hotkey import Hotkey
+from pykeys.interception import HotkeyInterceptor, intercept_binding
+from pykeys.key_types import Key
 from pykeys._hook import KeyHook
 from pykeys.scheduling import default_scheduler, Scheduler
 
@@ -43,7 +44,10 @@ class Layout:
         return Layout(
             self.name,
             self._scheduler,
-            [binding.intercept(interceptor) for binding in self._map.bindings],
+            [
+                intercept_binding(binding, interceptor)
+                for binding in self._map.bindings
+            ],
         )
 
     @property
