@@ -7,8 +7,7 @@ from pykeys.commanding import Command, CommandProducer, resolve_command
 from pykeys.hotkey import Hotkey
 from pykeys.key_types import Key
 from pykeys.hook.key_hook import KeyHook
-from pykeys.schedulers.default import default_scheduler
-from pykeys.schedulers.scheduling import Scheduler
+from pykeys.schedulers import default_scheduler, Scheduler
 
 
 class Layout:
@@ -71,9 +70,9 @@ class Layout:
         ]
 
     def __enter__(self):
-        from .print_layout import get_layout_table
+        from .print_layout import print_layout_table
 
-        print(f"➡️ {get_layout_table(self)}")
+        print(f"➡️ {print_layout_table(self)}")
         key_hooks = self._get_key_hooks()
         registered: list[KeyHook] = []
         try:

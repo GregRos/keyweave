@@ -2,7 +2,7 @@ from time import sleep
 from pykeys import key
 from pykeys.commanding import command, HotkeyEvent
 from pykeys.layout.layout import Layout
-from pykeys.schedulers.default import default_scheduler
+from pykeys.schedulers import default_scheduler
 
 
 def on_error(e: BaseException):

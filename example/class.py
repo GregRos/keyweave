@@ -14,7 +14,7 @@ sys.path.insert(
 from pykeys.commanding import command
 
 
-from pykeys.layout_class.layout_class import LayoutClass
+from pykeys.layout_class import LayoutClass
 
 
 class AsddBC(LayoutClass):

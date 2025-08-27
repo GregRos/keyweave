@@ -10,7 +10,7 @@ from beautifultable import BeautifulTable, ALIGN_LEFT
 from pykeys.layout.layout import Layout
 
 
-def get_magic_marker(inner: str):
+def _get_magic_marker(inner: str):
     return f"@{inner}@"
 
 
@@ -18,7 +18,7 @@ _magic_marker_regex = re.compile(rf"^.*@(.+)@.*$", re.MULTILINE)
 _newline_regex = re.compile(r"\n")
 
 
-def get_layout_table(layout: Layout):
+def print_layout_table(layout: Layout):
     table = BeautifulTable()
     table.border.left = "|"
     table.border.right = "|"
@@ -33,7 +33,7 @@ def get_layout_table(layout: Layout):
         ):
             index = len(headings_saved)
             headings_saved.append(heading_line)
-            table.rows.append([get_magic_marker(str(index)), "", ""])
+            table.rows.append([_get_magic_marker(str(index)), "", ""])
             less_specific_first = sorted(
                 of_type, key=lambda binding: binding.hotkey.specificity
             )

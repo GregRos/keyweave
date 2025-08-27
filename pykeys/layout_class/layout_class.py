@@ -4,7 +4,7 @@ from functools import partial
 from pykeys.bindings import Binding, HotkeyInterceptionEvent
 from pykeys.commanding import CommandInfo
 from pykeys.layout.layout import Layout
-from pykeys.schedulers.scheduling import Scheduler
+from pykeys.schedulers import Scheduler
 
 
 class LayoutClass(ABC):
