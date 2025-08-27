@@ -1,8 +1,7 @@
 from typing import Any, Protocol
-from pykeys.commanding import HotkeyEvent
-from pykeys.key.key import KeyInput
+from pykeys.key_types import KeyInput
 
-from pykeys.hotkey import Hotkey
+from pykeys.hotkey import Hotkey, HotkeyEvent
 from pykeys.bindings import HotkeyInterceptionEvent
 
 

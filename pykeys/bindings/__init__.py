@@ -8,7 +8,7 @@ from pykeys.commanding import (
     FuncHotkeyHandler,
     resolve_command,
 )
-from pykeys.key.key import Key
+from pykeys.key_types import Key
 from pykeys.hotkey import (
     Hotkey,
     HotkeyEvent,

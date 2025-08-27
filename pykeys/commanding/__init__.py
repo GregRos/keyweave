@@ -3,11 +3,9 @@ import inspect
 import time
 from typing import Any, Protocol, TYPE_CHECKING
 
-from pykeys.hotkey import HotkeyEvent
-
 
 if TYPE_CHECKING:
-    from pykeys.hotkey import Hotkey, HotkeyInfo
+    from pykeys.hotkey import Hotkey, HotkeyInfo, HotkeyEvent
 
 
 @dataclass(kw_only=True)

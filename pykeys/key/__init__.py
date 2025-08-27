@@ -1,4 +1,4 @@
-from pykeys.key.key import Key
+from pykeys.key_types import Key
 
 
 num_1 = Key("num:1")

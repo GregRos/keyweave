@@ -3,9 +3,7 @@ import time
 from typing import TYPE_CHECKING
 
 from pykeys.commanding import CommandProducer, resolve_command
-from pykeys.key.key import Key
-from pykeys.key.key_set import KeySet, KeysInput
-from pykeys.key.key_event_type import KeyEventType
+from pykeys.key_types import Key, KeySet, KeysInput, KeyEventType
 
 if TYPE_CHECKING:
     from pykeys.commanding import Command
@@ -107,4 +105,4 @@ class InputEvent:
 class HotkeyEvent:
     hotkey: "HotkeyInfo"
     event: InputEvent
-    command: Command
+    command: "Command"
