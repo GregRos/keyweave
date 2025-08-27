@@ -8,7 +8,11 @@ if TYPE_CHECKING:
 
 
 @dataclass(kw_only=True)
-class CommandInfo:
+class CommandMeta:
+    """
+    Metadata about a command. Used for debugging and user feedback.
+    """
+
     label: str | None
     description: str | None = field(default=None, kw_only=True)
     emoji: str | None = field(default=None, kw_only=True)
@@ -16,7 +20,11 @@ class CommandInfo:
 
 @dataclass
 class Command:
-    info: CommandInfo
+    """
+    Represents a command that can be triggered by a hotkey, with an attached handler.
+    """
+
+    info: CommandMeta
     handler: "FuncHotkeyHandler"
 
     def bind(self, hotkey: "Hotkey"):
@@ -26,11 +34,18 @@ class Command:
 
 
 class FuncHotkeyHandler(Protocol):
+    """
+    Represents a non-instance function that handles a hotkey event.
+    """
 
     def __call__(self, event: "HotkeyEvent", /) -> Any: ...
 
 
 class MethodHotkeyHandler(Protocol):
+    """
+    Represents an instance method that handles a hotkey event.
+    """
+
     def __call__(self, instance: Any, event: "HotkeyEvent", /) -> Any: ...
 
 
@@ -38,7 +53,12 @@ type HotkeyHandler = FuncHotkeyHandler | MethodHotkeyHandler
 
 
 class CommandProducer:
-    def __init__(self, func: HotkeyHandler, cmd: CommandInfo):
+    """
+    Represents an object that produces a command with an attached handler. When applied to a method,
+    requires additional context to function properly.
+    """
+
+    def __init__(self, func: HotkeyHandler, cmd: CommandMeta):
         self.func = func
         self.cmd = cmd
 
@@ -61,6 +81,9 @@ class CommandProducer:
     def __get__(
         self, instance: object | None, owner: type | None = None
     ) -> Command:
+        """
+        May bind an instance to a command handler so it can be invoked as an instance method.
+        """
         return self._make(instance)
 
 
@@ -68,7 +91,10 @@ type CommandOrProducer = Command | CommandProducer
 
 
 @dataclass
-class command(CommandInfo):
+class command(CommandMeta):
+    """
+    Use this decorator on a method or function to turn it into a Command.
+    """
 
     def __call__(self, handler: HotkeyHandler) -> "CommandProducer":
         return CommandProducer(handler, cmd=self)
@@ -77,6 +103,9 @@ class command(CommandInfo):
 def resolve_command(
     cmd: CommandOrProducer, instance: object | None = None
 ) -> Command:
+    """
+    Resolves a command or command producer into a command.
+    """
     if isinstance(cmd, CommandProducer):
         return cmd.__get__(instance, type(instance) if instance else None)
     return cmd

@@ -8,6 +8,10 @@ from pykeys.hotkey import HotkeyEvent
 
 @dataclass(init=False)
 class HotkeyInterceptionEvent(HotkeyEvent):
+    """
+    Represents an intercepted `HotkeyEvent`. Used in the layout hotkey interception API.
+    """
+
     _handled: bool = False
 
     def __init__(self, event: HotkeyEvent, handler: FuncHotkeyHandler):
@@ -28,6 +32,10 @@ class HotkeyInterceptionEvent(HotkeyEvent):
 
 
 class HotkeyInterceptor(Protocol):
+    """
+    A function that can intercept a hotkey event.
+    """
+
     def __call__(self, action: HotkeyInterceptionEvent): ...
 
 

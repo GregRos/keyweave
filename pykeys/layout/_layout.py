@@ -12,6 +12,32 @@ from pykeys.scheduling import default_scheduler, Scheduler
 
 
 class Layout:
+    """
+    A Hotkey layout consisting of `Binding` objects that link Hotkey events to Commands with attached handlers.
+
+    Creating a layout using functions:
+
+    >>> from pykeys import key, command
+    ... @command("command_1")
+    ... def command_1(e: HotkeyEvent):
+    ...     pass
+    ...
+    ... @command("command_2")
+    ... def command_2(e: HotkeyEvent):
+    ...     pass
+    >>> layout = Layout.create("my_layout", {
+    ...     key.a: command_1,
+    ...     key.b: command_2,
+    ... })
+
+    To enable a layout, use a context manager:
+    >>> with layout:
+    ...     import time
+    ...     time.sleep(10)  # keep the layout active for 10 seconds
+
+    You can also create a layout using a class by subclassing `LayoutClass`.
+    """
+
     _registered: list[KeyHook]
     _map: BindingCollection
     _active: bool = False

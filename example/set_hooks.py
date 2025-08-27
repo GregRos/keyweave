@@ -1,8 +1,5 @@
 from time import sleep
-from pykeys import key
-from pykeys.commanding import command, HotkeyEvent
-from pykeys.layout._layout import Layout
-from pykeys.scheduling import default_scheduler
+from pykeys import key, command, HotkeyEvent, Layout
 
 
 def on_error(e: BaseException):
@@ -19,7 +16,6 @@ def abc(e: HotkeyEvent):
     print(f"abc: {e}")
 
 
-scheduler = default_scheduler(on_error)
 lt = Layout.create(
     "my_layout", {key.a & key.alt + key.ctrl: xyz, key.num_2: abc}
 )

@@ -5,11 +5,10 @@ from time import sleep
 from pykeys import (
     key,
     LayoutClass,
+    command,
+    HotkeyEvent,
+    HotkeyInterceptionEvent,
 )
-from pykeys.commanding import command
-from pykeys.hotkey import HotkeyEvent
-from pykeys.interception import HotkeyInterceptionEvent
-from pykeys.layout import LayoutClass
 
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -17,9 +16,12 @@ sys.path.insert(
 
 
 class AsddBC(LayoutClass):
+    a = 1
 
     def __intercept__(self, intercepted: HotkeyInterceptionEvent):
+        print("A", self.a)
         print("Intercepted", intercepted)
+        intercepted.next()
 
     @(key.b & key.shift + key.ctrl)
     @command(label="abc", description="ABC")
