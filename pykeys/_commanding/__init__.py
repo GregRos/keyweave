@@ -1,11 +1,10 @@
 from dataclasses import dataclass, field
 import inspect
-import time
 from typing import Any, Protocol, TYPE_CHECKING
 
 
 if TYPE_CHECKING:
-    from pykeys.hotkey import Hotkey, HotkeyInfo, HotkeyEvent
+    from pykeys._hotkey import Hotkey, HotkeyEvent
 
 
 @dataclass(kw_only=True)
@@ -21,7 +20,7 @@ class Command:
     handler: "FuncHotkeyHandler"
 
     def bind(self, hotkey: "Hotkey"):
-        from ..bindings import Binding
+        from .._bindings import Binding
 
         return Binding(hotkey.info, self)
 

@@ -1,15 +1,15 @@
 from typing import Any, Protocol
-from pykeys.key_types import KeyInput
+from pykeys._key_types import KeyInput
 
-from pykeys.hotkey import Hotkey, HotkeyEvent
-from pykeys.bindings import HotkeyInterceptionEvent
+from pykeys._hotkey import Hotkey, HotkeyEvent
+from pykeys._bindings import HotkeyInterceptionEvent
 from abc import ABC
 from functools import partial
 
-from pykeys.bindings import Binding, HotkeyInterceptionEvent
-from pykeys.commanding import CommandInfo
-from pykeys.layout.layout import Layout
-from pykeys.schedulers import Scheduler
+from pykeys._bindings import Binding, HotkeyInterceptionEvent
+from pykeys._commanding import CommandInfo
+from pykeys._layout.layout import Layout
+from pykeys.scheduling import Scheduler
 
 
 class LayoutClass(ABC):

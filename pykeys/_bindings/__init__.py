@@ -1,15 +1,15 @@
 from dataclasses import dataclass, field
 import inspect
-from typing import TYPE_CHECKING, Any, Iterable, Iterator, Protocol, overload
+from typing import Any, Iterable, Iterator, Protocol, overload
 
-from pykeys.commanding import (
+from pykeys._commanding import (
     Command,
     CommandProducer,
     FuncHotkeyHandler,
     resolve_command,
 )
-from pykeys.key_types import Key
-from pykeys.hotkey import (
+from pykeys._key_types import Key
+from pykeys._hotkey import (
     Hotkey,
     HotkeyEvent,
     HotkeyInfo,
@@ -157,7 +157,7 @@ class KeyBindingCollection:
         self._map = bindings
 
     def __getitem__(self, key: HotkeyInput) -> Binding:
-        from ..hotkey import resolve_hotkey
+        from .._hotkey import resolve_hotkey
 
         return self._map[resolve_hotkey(key)]
 
