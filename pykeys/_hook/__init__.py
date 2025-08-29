@@ -2,7 +2,7 @@ import threading
 from typing import Any
 from pykeys.bindings import KeyBindingCollection
 from pykeys.hotkey import InputEvent
-from pykeys.key_types import Key, KeySet
+from pykeys.key_types import Key, KeyInputState, KeySet
 from keyboard import KeyboardEvent, hook_key, is_pressed, unhook
 
 from win32api import GetAsyncKeyState  # type: ignore
@@ -16,16 +16,19 @@ class KeyHook:
     _lock = threading.Lock()
 
     def __init__(
-        self, key: Key, collection: KeyBindingCollection, scheduler: Scheduler
+        self,
+        key: Key,
+        collection: KeyBindingCollection,
+        scheduler: Scheduler,
     ):
-        self.key = key
+        self.trigger = key
         self._collection = collection
         self._scheduler = scheduler
         self.manufactured_handler = self._get_handler()
 
     def __enter__(self):
         self._internal_handler = hook_key(
-            _get_keyboard_hook_id(self.key),
+            _get_keyboard_hook_id(self.trigger),
             self.manufactured_handler,
             suppress=True,
         )
@@ -40,9 +43,9 @@ class KeyHook:
             only_matching = [
                 binding
                 for binding in self._collection
-                if binding.hotkey.trigger.is_numpad == event.is_keypad
+                if binding.hotkey.trigger.key.is_numpad == event.is_keypad
                 and _is_key_set_active(binding.hotkey.modifiers)
-                and binding.hotkey.type == event.event_type
+                and event.event_type == binding.hotkey.trigger.state
             ]
 
             by_specificity = sorted(
@@ -110,5 +113,15 @@ def _is_pressed(key: Key):
         return is_pressed(hook_id)
 
 
+def _is_state_active(state: KeyInputState):
+    match state.state:
+        case "down":
+            return _is_pressed(state.key)
+        case "up":
+            return not _is_pressed(state.key)
+        case _:
+            raise ValueError(f"Unknown key state: {state.state}")
+
+
 def _is_key_set_active(key_set: KeySet):
-    return all(_is_pressed(key) for key in key_set)
+    return all(_is_state_active(key) for key in key_set)

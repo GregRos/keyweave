@@ -28,6 +28,11 @@ class AsddBC(LayoutClass):
     def abc(self, e: HotkeyEvent):
         print(e)
 
+    @(key.z & key.alt + ~key.ctrl)
+    @command(label="xxx")
+    def abce(self, e: HotkeyEvent):
+        print(e)
+
     @(key.a & key.shift + key.ctrl)
     @command(label="abc", description="ABC")
     def abcd(self, e: HotkeyEvent):

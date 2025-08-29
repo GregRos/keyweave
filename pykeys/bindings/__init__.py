@@ -8,13 +8,14 @@ from pykeys.commanding import (
     FuncHotkeyHandler,
     resolve_command,
 )
-from pykeys.key_types import Key
+from pykeys.key_types import Key, KeyInputState, resolve_key_input
 from pykeys.hotkey import (
     Hotkey,
     HotkeyEvent,
     HotkeyInfo,
     HotkeyInput,
     InputEvent,
+    resolve_hotkey,
 )
 
 
@@ -45,13 +46,13 @@ class Binding:
 
 class BindingCollection(Iterable["KeyBindingCollection"]):
     _map: dict[Key, "KeyBindingCollection"]
-    _handler_map: dict[Key, Any]
+    _handler_map: dict[KeyInputState, Any]
 
     def __init__(self, input: dict[Key, "KeyBindingCollection"] = {}):
         self._map = input
 
     def __add__(self, input: Binding):
-        trigger_key = input.hotkey.trigger
+        trigger_key = input.hotkey.trigger.key
         new_map = self._map.copy()
         trigger_collection = new_map.get(
             trigger_key, KeyBindingCollection(trigger_key)
@@ -79,15 +80,15 @@ class BindingCollection(Iterable["KeyBindingCollection"]):
     def __getitem__(self, key: Hotkey) -> Binding: ...
 
     def __getitem__(
-        self, key: Key | HotkeyInfo | Hotkey
+        self, key: Key | HotkeyInfo | Hotkey | KeyInputState
     ) -> "KeyBindingCollection | Binding":
         match key:
             case HotkeyInfo():
-                return self._map[key.trigger][key]
-            case Key():
-                return self._map[key]
+                return self._map[key.trigger.key][key]
+            case Key() | KeyInputState():
+                return self._map[resolve_key_input(key).key]
             case Hotkey():
-                return self._map[key.info.trigger][key]
+                return self._map[key.info.trigger.key][key]
 
     def __iter__(self) -> Iterator["KeyBindingCollection"]:
         return iter(self._map.values())
@@ -109,7 +110,7 @@ class KeyBindingCollection:
 
     def __getitem__(self, key: HotkeyInput) -> Binding:
 
-        return self._map[_resolve_hotkey(key)]
+        return self._map[resolve_hotkey(key)]
 
     def set(self, binding: Binding):
         return KeyBindingCollection(
@@ -135,11 +136,3 @@ class BindingProducer:
         r_cmd = resolve_command(self.cmd, instance)
 
         return r_cmd.bind(self.hotkey)
-
-
-def _resolve_hotkey(input: HotkeyInput, /) -> HotkeyInfo:
-    match input:
-        case HotkeyInfo():
-            return input
-        case Hotkey():
-            return input.info

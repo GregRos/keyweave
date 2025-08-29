@@ -4,7 +4,7 @@ from pykeys.key_types import (
     KeyInput,
     KeySet,
     KeysInput,
-    KeyEventType,
+    KeyInputState,
     TriggerTypeName,
 )
 

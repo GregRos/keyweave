@@ -2,40 +2,6 @@ from functools import total_ordering
 from typing import Iterable, Literal
 
 
-TriggerTypeName = Literal["down", "up"]
-
-
-@total_ordering
-class KeyEventType:
-    """
-    Represents key up or key down states.
-    """
-
-    __match_args__ = ("name",)
-
-    def __init__(self, name: "TriggerTypeName | KeyEventType"):
-        self.name = name if isinstance(name, str) else name.name
-
-    def __hash__(self) -> int:
-        return hash(self.name)
-
-    @property
-    def char(self) -> str:
-        return "↓" if self.name == "down" else "↑"
-
-    def __eq__(self, other: object) -> bool:
-        match other:
-            case KeyEventType(other_name):
-                return self.name == other_name
-            case str(s):
-                return self.name == s
-            case _:
-                return False
-
-    def __lt__(self, other: "KeyEventType") -> bool:
-        return self.name < other.name
-
-
 @total_ordering
 class Key:
     """
@@ -76,6 +42,9 @@ class Key:
     def __hash__(self) -> int:
         return hash(self.id)
 
+    def __invert__(self):
+        return KeyInputState(self, "up")
+
     @property
     def is_mouse(self):
         """
@@ -97,7 +66,7 @@ class Key:
     def specificity(self):
         return 1
 
-    def __add__(self, other: "Key"):
+    def __add__(self, other: "Key | KeyInputState"):
         """
         Combines two keys into a `KeySet`, an unordered collection of keys.
         """
@@ -105,7 +74,7 @@ class Key:
 
         return KeySet({self, other})
 
-    def __and__(self, other: "Iterable[Key] | Key | KeySet"):
+    def __and__(self, other: "KeysInput"):
         """
         Creates a Hotkey using the left key as a trigger (down event) and the right keys as modifiers.
 
@@ -117,55 +86,129 @@ class Key:
         return self.down.modifiers(other)
 
     @property
-    def down(self):
-        """
-        Returns a Hotkey for the key being pressed down.
-        """
-        from pykeys.hotkey import Hotkey, HotkeyInfo
+    def down(self) -> "KeyInputState":
 
-        return Hotkey(HotkeyInfo(trigger=self, type=KeyEventType("down")))
+        return KeyInputState(self, "down")
 
     @property
     def up(self):
-        """
-        Returns a Hotkey for the key being released.
-        """
-        from pykeys.hotkey import Hotkey, HotkeyInfo
-
-        return Hotkey(HotkeyInfo(trigger=self, type=KeyEventType("up")))
+        return KeyInputState(self, "up")
 
     def __repr__(self) -> str:
-        return f"[{self.id}]"
+        return f"{self.id}"
 
     def __str__(self) -> str:
         return repr(self)
 
 
+type TriggerTypeName = Literal["down", "up"]
+
+
+@total_ordering
+class KeyInputState:
+    """
+    Represents key up or key down states.
+    """
+
+    __match_args__ = ("key", "state")
+
+    def __str__(self) -> str:
+        """
+        A label for the Hotkey's trigger key.
+        """
+        return f"{self.state_char}{self.key}"
+
+    def __repr__(self) -> str:
+        return str(self)
+
+    def __invert__(self):
+        return KeyInputState(self.key, "up" if self.is_down else "down")
+
+    def __init__(self, key: Key, state: TriggerTypeName):
+        self.key = key
+        self.state = state
+
+    def __hash__(self) -> int:
+        return hash(self.key) ^ hash(self.state)
+
+    def modifiers(self, modifiers: "KeysInput"):
+        from ..hotkey import Hotkey, HotkeyInfo
+
+        """
+        Adds modifiers to a Hotkey.
+        """
+        return Hotkey(
+            HotkeyInfo(
+                trigger=self,
+                modifiers=KeySet(modifiers),
+                passthrough=False,
+            )
+        )
+
+    def __add__(self, other: "KeyInputState | Key"):
+        """
+        Combines two keys into a `KeySet`, an unordered collection of keys.
+        """
+        from pykeys.key_types import KeySet
+
+        return KeySet({self, other})
+
+    @property
+    def state_char(self) -> str:
+        return "↓" if self.state == "down" else "↑"
+
+    def __lt__(self, other: "KeyInputState") -> bool:
+        return self.key < other.key and self.state < other.state
+
+    @property
+    def specificity(self) -> int:
+        return self.key.specificity
+
+    @property
+    def is_down(self) -> bool:
+        return self.state == "down"
+
+    @property
+    def is_up(self) -> bool:
+        return self.state == "up"
+
+
 type KeyInput = "str | Key"
 
+type KeyStateInput = Key | KeyInputState
+type KeysInput = KeyInputState | KeySet | Key | Iterable[Key | KeyInputState]
 
-from typing import Union
 
-KeysInput = Union["Key", "KeySet", Iterable[Key]]
+def resolve_key_input(k: Key | KeyInputState) -> KeyInputState:
+    match k:
+        case Key():
+            return KeyInputState(k, "down")
+        case KeyInputState():
+            return k
+        case _:
+            raise TypeError(f"Invalid key input: {k}")
 
 
 @total_ordering
 class KeySet:
     """
-    An unordered collection of `Key` objects, used as a set of modifiers.
+    An unordered collection of `KeyInputState` objects, used as a set of modifiers.
     """
 
     __match_args__ = ("set",)
-    set: frozenset[Key]
+    set: frozenset[KeyInputState]
+
+    def __invert__(self):
+        return KeySet(key.__invert__() for key in self.set)
 
     def __init__(self, input: KeysInput = {}):
         match input:
-            case Key():
-                self.set = frozenset({input})
+            case Key() | KeyInputState():
+                self.set = frozenset({resolve_key_input(input)})
             case KeySet():
                 self.set = input.set
             case _:
-                self.set = frozenset(input)
+                self.set = frozenset(resolve_key_input(x) for x in input)
 
     def __hash__(self) -> int:
         return hash(self.set)
@@ -189,8 +232,8 @@ class KeySet:
     def __iter__(self):
         return iter(self.set)
 
-    def __contains__(self, key: Key) -> bool:
-        return key in self.set
+    def __contains__(self, key: Key | KeyInputState) -> bool:
+        return resolve_key_input(key) in self.set
 
     def __len__(self) -> int:
         return len(self.set)

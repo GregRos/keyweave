@@ -3,7 +3,7 @@ import time
 from typing import TYPE_CHECKING
 
 from pykeys.commanding import CommandProducer
-from pykeys.key_types import Key, KeySet, KeysInput, KeyEventType
+from pykeys.key_types import Key, KeyInputState, KeySet, KeysInput
 
 if TYPE_CHECKING:
     from pykeys.commanding import Command
@@ -15,9 +15,8 @@ class HotkeyInfo:
     Represents declarative information about a hotkey, including its trigger key, event type, and modifiers.
     """
 
-    __match_args__ = ("key", "type", "modifiers", "passthrough")
-    trigger: Key
-    type: KeyEventType
+    __match_args__ = ("trigger", "type", "modifiers", "passthrough")
+    trigger: KeyInputState
     modifiers: KeySet = field(default=KeySet())
     passthrough: bool = field(default=False, compare=False)
 
@@ -33,11 +32,11 @@ class HotkeyInfo:
         """
         A label for the Hotkey's trigger key.
         """
-        return f"{self.type.char} {self.trigger}"
+        return str(self.trigger)
 
     def __repr__(self) -> str:
         if not self.modifiers:
-            return f"{self.trigger_label}"
+            return str(self.trigger)
         else:
             return f"{self.trigger_label} & {self.modifiers}"
 
@@ -60,7 +59,6 @@ class Hotkey:
         return Hotkey(
             HotkeyInfo(
                 trigger=self.info.trigger,
-                type=self.info.type,
                 modifiers=self.info.modifiers,
                 passthrough=enable,
             )
@@ -71,7 +69,7 @@ class Hotkey:
         """
         Whether the hotkey is triggered by a key press event.
         """
-        return self.info.type == "down"
+        return self.info.trigger.is_down
 
     def __call__(self, cmd: "Command | CommandProducer"):
         """
@@ -86,7 +84,7 @@ class Hotkey:
         """
         Whether the hotkey is triggered by a key release event.
         """
-        return self.info.type == "up"
+        return self.info.trigger.is_up
 
     def __and__(self, other: KeysInput):
         """
@@ -101,7 +99,6 @@ class Hotkey:
         return Hotkey(
             HotkeyInfo(
                 trigger=self.info.trigger,
-                type=self.info.type,
                 modifiers=self.info.modifiers + modifiers,
                 passthrough=self.info.passthrough,
             )
@@ -133,3 +130,17 @@ class HotkeyEvent:
     hotkey: "HotkeyInfo"
     event: InputEvent
     command: "Command"
+
+
+def resolve_hotkey(
+    input: Key | Hotkey | HotkeyInfo | KeyInputState,
+) -> HotkeyInfo:
+    match input:
+        case HotkeyInfo():
+            return input
+        case Hotkey():
+            return input.info
+        case KeyInputState():
+            return HotkeyInfo(trigger=input)
+        case Key():
+            return HotkeyInfo(trigger=input.down)
