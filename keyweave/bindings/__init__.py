@@ -2,13 +2,13 @@ from dataclasses import dataclass, field
 import inspect
 from typing import Any, Iterable, Iterator, overload
 
-from pykeys.commanding import (
+from keyweave.commanding import (
     Command,
     CommandProducer,
     FuncHotkeyHandler,
 )
-from pykeys.key_types import Key, KeyInputState
-from pykeys.hotkey import (
+from keyweave.key_types import Key, KeyInputState
+from keyweave.hotkey import (
     Hotkey,
     HotkeyEvent,
     HotkeyInfo,

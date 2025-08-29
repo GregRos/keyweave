@@ -1,14 +1,14 @@
-from pykeys.interception import HotkeyInterceptionEvent
-from pykeys.key_types import KeyInput
+from keyweave.interception import HotkeyInterceptionEvent
+from keyweave.key_types import KeyInput
 
-from pykeys.hotkey import Hotkey
+from keyweave.hotkey import Hotkey
 from abc import ABC
 from functools import partial
 
-from pykeys.bindings import Binding
-from pykeys.commanding import CommandMeta
-from pykeys.layout._layout import Layout
-from pykeys.scheduling import Scheduler
+from keyweave.bindings import Binding
+from keyweave.commanding import CommandMeta
+from keyweave.layout._layout import Layout
+from keyweave.scheduling import Scheduler
 
 
 class LayoutClass(ABC):
@@ -78,6 +78,3 @@ class LayoutClass(ABC):
             intercept = cls.__dict__["__intercept__"]
             layout = layout.intercept(partial(intercept, obj))
         return layout
-
-
-type TriggerInput = "Hotkey | KeyInput"

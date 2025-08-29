@@ -2,11 +2,11 @@ from dataclasses import dataclass, field
 import time
 from typing import TYPE_CHECKING
 
-from pykeys.commanding import CommandProducer
-from pykeys.key_types import KeyInputState, KeySet, KeysInput
+from keyweave.commanding import CommandProducer
+from keyweave.key_types import KeyInputState, KeySet, KeysInput
 
 if TYPE_CHECKING:
-    from pykeys.commanding import Command
+    from keyweave.commanding import Command
 
 
 @dataclass(order=True, eq=True, frozen=True, unsafe_hash=True)

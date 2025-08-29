@@ -2,7 +2,7 @@ import os
 import sys
 from time import sleep
 
-from pykeys import (
+from keyweave import (
     key,
     LayoutClass,
     command,

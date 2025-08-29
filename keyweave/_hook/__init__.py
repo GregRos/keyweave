@@ -1,14 +1,14 @@
 import threading
 from typing import Any
-from pykeys.bindings import KeyBindingCollection
-from pykeys.hotkey import InputEvent
-from pykeys.key_types import Key, KeyInputState, KeySet
+from keyweave.bindings import KeyBindingCollection
+from keyweave.hotkey import InputEvent
+from keyweave.key_types import Key, KeyInputState, KeySet
 from keyboard import KeyboardEvent, hook_key, is_pressed, unhook
 
 from win32api import GetAsyncKeyState  # type: ignore
 
 
-from pykeys.scheduling import Scheduler
+from keyweave.scheduling import Scheduler
 
 
 class KeyHook:

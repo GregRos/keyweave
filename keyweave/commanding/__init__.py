@@ -4,7 +4,7 @@ from typing import Any, Protocol, TYPE_CHECKING
 
 
 if TYPE_CHECKING:
-    from pykeys.hotkey import Hotkey, HotkeyEvent
+    from keyweave.hotkey import Hotkey, HotkeyEvent
 
 
 @dataclass()

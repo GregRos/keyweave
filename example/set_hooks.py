@@ -1,5 +1,5 @@
 from time import sleep
-from pykeys import key, command, HotkeyEvent, Layout
+from keyweave import key, command, HotkeyEvent, Layout
 
 
 def on_error(e: BaseException):

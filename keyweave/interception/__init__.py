@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import Protocol
 
-from pykeys.bindings import Binding
-from pykeys.commanding import Command, FuncHotkeyHandler
-from pykeys.hotkey import HotkeyEvent
+from keyweave.bindings import Binding
+from keyweave.commanding import Command, FuncHotkeyHandler
+from keyweave.hotkey import HotkeyEvent
 
 
 @dataclass(init=False)

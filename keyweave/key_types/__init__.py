@@ -179,7 +179,6 @@ class KeyInputState:
 
 type KeyInput = "str | Key"
 
-type KeyStateInput = Key | KeyInputState
 type KeysInput = KeySet | Iterable[Key | KeyInputState]
 
 
@@ -214,7 +213,7 @@ class KeySet:
         """
         Combines two keys into a `KeySet`, an unordered collection of keys.
         """
-        from pykeys.key_types import KeySet
+        from keyweave.key_types import KeySet
 
         match other:
             case KeyInputState():

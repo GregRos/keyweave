@@ -1,14 +1,14 @@
 from typing import Any, Iterable
 
 
-from pykeys.bindings import BindingCollection
-from pykeys.bindings import Binding
-from pykeys.commanding import Command, CommandProducer
-from pykeys.hotkey import Hotkey
-from pykeys.interception import HotkeyInterceptor, intercept_binding
-from pykeys.key_types import Key
-from pykeys._hook import KeyHook
-from pykeys.scheduling import default_scheduler, Scheduler
+from keyweave.bindings import BindingCollection
+from keyweave.bindings import Binding
+from keyweave.commanding import Command, CommandProducer
+from keyweave.hotkey import Hotkey
+from keyweave.interception import HotkeyInterceptor, intercept_binding
+from keyweave.key_types import Key
+from keyweave._hook import KeyHook
+from keyweave.scheduling import default_scheduler, Scheduler
 
 
 class Layout:
