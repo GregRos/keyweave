@@ -17,7 +17,7 @@ def abc(e: HotkeyEvent):
 
 
 lt = Layout.create(
-    "my_layout", {key.a & key.alt + key.ctrl: xyz, key.num_2: abc}
+    "my_layout", {key.a & [key.alt, key.ctrl]: xyz, key.num_2: abc}
 )
 with lt:
     sleep(1000)

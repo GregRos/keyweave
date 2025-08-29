@@ -3,7 +3,7 @@ import time
 from typing import TYPE_CHECKING
 
 from pykeys.commanding import CommandProducer
-from pykeys.key_types import Key, KeyInputState, KeySet, KeysInput
+from pykeys.key_types import KeyInputState, KeySet, KeysInput
 
 if TYPE_CHECKING:
     from pykeys.commanding import Command
@@ -43,6 +43,9 @@ class HotkeyInfo:
     def __str__(self) -> str:
         return repr(self)
 
+    def __hotkey__(self):
+        return Hotkey(self)
+
 
 @dataclass(order=True, eq=True, frozen=True, unsafe_hash=True)
 class Hotkey:
@@ -51,6 +54,9 @@ class Hotkey:
     """
 
     info: HotkeyInfo
+
+    def __hotkey__(self):
+        return Hotkey(self.info)
 
     def passthrough(self, enable: bool = True):
         """
@@ -130,17 +136,3 @@ class HotkeyEvent:
     hotkey: "HotkeyInfo"
     event: InputEvent
     command: "Command"
-
-
-def resolve_hotkey(
-    input: Key | Hotkey | HotkeyInfo | KeyInputState,
-) -> HotkeyInfo:
-    match input:
-        case HotkeyInfo():
-            return input
-        case Hotkey():
-            return input.info
-        case KeyInputState():
-            return HotkeyInfo(trigger=input)
-        case Key():
-            return HotkeyInfo(trigger=input.down)

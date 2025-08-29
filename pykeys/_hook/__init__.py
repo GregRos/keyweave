@@ -124,4 +124,4 @@ def _is_state_active(state: KeyInputState):
 
 
 def _is_key_set_active(key_set: KeySet):
-    return all(_is_state_active(key) for key in key_set)
+    return all(_is_state_active(key_state) for key_state in key_set)

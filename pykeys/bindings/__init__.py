@@ -6,16 +6,14 @@ from pykeys.commanding import (
     Command,
     CommandProducer,
     FuncHotkeyHandler,
-    resolve_command,
 )
-from pykeys.key_types import Key, KeyInputState, resolve_key_input
+from pykeys.key_types import Key, KeyInputState
 from pykeys.hotkey import (
     Hotkey,
     HotkeyEvent,
     HotkeyInfo,
     HotkeyInput,
     InputEvent,
-    resolve_hotkey,
 )
 
 
@@ -86,7 +84,7 @@ class BindingCollection(Iterable["KeyBindingCollection"]):
             case HotkeyInfo():
                 return self._map[key.trigger.key][key]
             case Key() | KeyInputState():
-                return self._map[resolve_key_input(key).key]
+                return self._map[key.__keystate__().key]
             case Hotkey():
                 return self._map[key.info.trigger.key][key]
 
@@ -110,7 +108,7 @@ class KeyBindingCollection:
 
     def __getitem__(self, key: HotkeyInput) -> Binding:
 
-        return self._map[resolve_hotkey(key)]
+        return self._map[key.__hotkey__().info]
 
     def set(self, binding: Binding):
         return KeyBindingCollection(
@@ -133,6 +131,6 @@ class BindingProducer:
     hotkey: Hotkey
 
     def __get__(self, instance: object, owner: type) -> "Binding":
-        r_cmd = resolve_command(self.cmd, instance)
+        r_cmd = self.cmd.__get__(instance, owner)
 
         return r_cmd.bind(self.hotkey)

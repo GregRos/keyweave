@@ -5,7 +5,6 @@ from pykeys.key_types import (
     KeySet,
     KeysInput,
     KeyInputState,
-    TriggerTypeName,
 )
 
 from pykeys.layout._layout_class import LayoutClass

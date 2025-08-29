@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from pykeys.hotkey import Hotkey, HotkeyEvent
 
 
-@dataclass(kw_only=True)
+@dataclass()
 class CommandMeta:
     """
     Metadata about a command. Used for debugging and user feedback.
@@ -26,6 +26,11 @@ class Command:
 
     info: CommandMeta
     handler: "FuncHotkeyHandler"
+
+    def __get__(
+        self, instance: object | None = None, owner: type | None = None
+    ) -> "Command":
+        return self
 
     def bind(self, hotkey: "Hotkey"):
         from ..bindings import Binding
@@ -98,14 +103,3 @@ class command(CommandMeta):
 
     def __call__(self, handler: HotkeyHandler) -> "CommandProducer":
         return CommandProducer(handler, cmd=self)
-
-
-def resolve_command(
-    cmd: CommandOrProducer, instance: object | None = None
-) -> Command:
-    """
-    Resolves a command or command producer into a command.
-    """
-    if isinstance(cmd, CommandProducer):
-        return cmd.__get__(instance, type(instance) if instance else None)
-    return cmd

@@ -42,6 +42,12 @@ class Key:
     def __hash__(self) -> int:
         return hash(self.id)
 
+    def __keystate__(self):
+        return self.down
+
+    def __hotkey__(self):
+        return self.down.__hotkey__()
+
     def __invert__(self):
         return KeyInputState(self, "up")
 
@@ -65,14 +71,6 @@ class Key:
     @property
     def specificity(self):
         return 1
-
-    def __add__(self, other: "Key | KeyInputState"):
-        """
-        Combines two keys into a `KeySet`, an unordered collection of keys.
-        """
-        from pykeys.key_types import KeySet
-
-        return KeySet({self, other})
 
     def __and__(self, other: "KeysInput"):
         """
@@ -101,7 +99,7 @@ class Key:
         return repr(self)
 
 
-type TriggerTypeName = Literal["down", "up"]
+type KeyStateName = Literal["down", "up"]
 
 
 @total_ordering
@@ -112,6 +110,10 @@ class KeyInputState:
 
     __match_args__ = ("key", "state")
 
+    @property
+    def hotkey(self):
+        return self.__hotkey__()
+
     def __str__(self) -> str:
         """
         A label for the Hotkey's trigger key.
@@ -121,10 +123,20 @@ class KeyInputState:
     def __repr__(self) -> str:
         return str(self)
 
+    def __keystate__(self):
+        return self
+
+    def __hotkey__(self):
+        from ..hotkey import Hotkey, HotkeyInfo
+
+        return Hotkey(
+            HotkeyInfo(trigger=self, modifiers=KeySet(), passthrough=False)
+        )
+
     def __invert__(self):
         return KeyInputState(self.key, "up" if self.is_down else "down")
 
-    def __init__(self, key: Key, state: TriggerTypeName):
+    def __init__(self, key: Key, state: KeyStateName):
         self.key = key
         self.state = state
 
@@ -144,14 +156,6 @@ class KeyInputState:
                 passthrough=False,
             )
         )
-
-    def __add__(self, other: "KeyInputState | Key"):
-        """
-        Combines two keys into a `KeySet`, an unordered collection of keys.
-        """
-        from pykeys.key_types import KeySet
-
-        return KeySet({self, other})
 
     @property
     def state_char(self) -> str:
@@ -176,17 +180,7 @@ class KeyInputState:
 type KeyInput = "str | Key"
 
 type KeyStateInput = Key | KeyInputState
-type KeysInput = KeyInputState | KeySet | Key | Iterable[Key | KeyInputState]
-
-
-def resolve_key_input(k: Key | KeyInputState) -> KeyInputState:
-    match k:
-        case Key():
-            return KeyInputState(k, "down")
-        case KeyInputState():
-            return k
-        case _:
-            raise TypeError(f"Invalid key input: {k}")
+type KeysInput = KeySet | Iterable[Key | KeyInputState]
 
 
 @total_ordering
@@ -196,22 +190,39 @@ class KeySet:
     """
 
     __match_args__ = ("set",)
-    set: frozenset[KeyInputState]
+    set: dict[Key, KeyInputState]
 
     def __invert__(self):
         return KeySet(key.__invert__() for key in self.set)
 
     def __init__(self, input: KeysInput = {}):
         match input:
-            case Key() | KeyInputState():
-                self.set = frozenset({resolve_key_input(input)})
             case KeySet():
                 self.set = input.set
             case _:
-                self.set = frozenset(resolve_key_input(x) for x in input)
+                self.set = {
+                    key.__keystate__().key: key.__keystate__() for key in input
+                }
 
     def __hash__(self) -> int:
-        return hash(self.set)
+        return hash((x, y) for x, y in self.set.items())
+
+    def __add__(
+        self,
+        other: "KeyInputState | Key | Iterable[Key | KeyInputState] | KeySet",
+    ):
+        """
+        Combines two keys into a `KeySet`, an unordered collection of keys.
+        """
+        from pykeys.key_types import KeySet
+
+        match other:
+            case KeyInputState():
+                return KeySet(self.set | {other.key: other})
+            case KeySet():
+                return KeySet(self.set | other.set)
+            case _:
+                raise TypeError(f"Invalid key input: {other}")
 
     def __bool__(self) -> bool:
         return bool(self.set)
@@ -220,20 +231,23 @@ class KeySet:
         return isinstance(other, KeySet) and self.set == other.set
 
     def __lt__(self, other: "KeySet") -> bool:
-        return self.set < other.set
-
-    def __add__(self, other: KeysInput) -> "KeySet":
-        return KeySet(self.set | KeySet(other).set)
+        if self.set.keys() != other.set.keys():
+            return self.set.keys() < other.set.keys()
+        ordered_keys = sorted(self.set.keys())
+        for key in ordered_keys:
+            if self.set[key] != other.set[key]:
+                return self.set[key] < other.set[key]
+        return False
 
     @property
     def specificity(self) -> int:
         return sum(key.specificity for key in self.set)
 
     def __iter__(self):
-        return iter(self.set)
+        return iter(self.set.values())
 
     def __contains__(self, key: Key | KeyInputState) -> bool:
-        return resolve_key_input(key) in self.set
+        return self.set[key.__keystate__().key] == key.__keystate__()
 
     def __len__(self) -> int:
         return len(self.set)

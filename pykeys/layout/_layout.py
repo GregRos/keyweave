@@ -3,8 +3,8 @@ from typing import Any, Iterable
 
 from pykeys.bindings import BindingCollection
 from pykeys.bindings import Binding
-from pykeys.commanding import Command, CommandProducer, resolve_command
-from pykeys.hotkey import Hotkey, resolve_hotkey
+from pykeys.commanding import Command, CommandProducer
+from pykeys.hotkey import Hotkey
 from pykeys.interception import HotkeyInterceptor, intercept_binding
 from pykeys.key_types import Key
 from pykeys._hook import KeyHook
@@ -124,8 +124,6 @@ class Layout:
     def create(
         name: str, d: dict[Hotkey | Key, Command | CommandProducer]
     ) -> "Layout":
-        clean_dict = {resolve_hotkey(k): v for k, v in d.items()}
-        xs = [
-            Binding(k, resolve_command(v, None)) for k, v in clean_dict.items()
-        ]
+        clean_dict = {k.__hotkey__().info: v for k, v in d.items()}
+        xs = [Binding(k, v.__get__()) for k, v in clean_dict.items()]
         return Layout(name, bindings=xs)
