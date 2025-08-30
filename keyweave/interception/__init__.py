@@ -12,10 +12,13 @@ class HotkeyInterceptionEvent(HotkeyEvent):
     Represents an intercepted `HotkeyEvent`. Used in the layout hotkey interception API.
     """
 
+    def __str__(self):
+        return super().__str__() + " (intercepted)"
+
     _handled: bool = False
 
     def __init__(self, event: HotkeyEvent, handler: FuncHotkeyHandler):
-        HotkeyEvent.__init__(self, event.hotkey, event.event, event.command)
+        HotkeyEvent.__init__(self, event.binding, event.event)
         self._handler = handler
 
     def next(self):

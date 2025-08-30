@@ -7,6 +7,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/example/messing_with_keys.py",
       "console": "integratedTerminal",
+
       "internalConsoleOptions": "neverOpen"
     },
     {
@@ -22,6 +23,7 @@
       "name": "Python: class",
       "type": "debugpy",
       "request": "launch",
+
       "program": "${workspaceFolder}/example/class.py",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"

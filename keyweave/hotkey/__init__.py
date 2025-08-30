@@ -7,6 +7,7 @@ from keyweave.key_types import KeyInputState, KeySet, KeysInput
 
 if TYPE_CHECKING:
     from keyweave.commanding import Command
+    from keyweave.bindings import Binding
 
 
 @dataclass(order=True, eq=True, frozen=True, unsafe_hash=True)
@@ -34,14 +35,11 @@ class HotkeyInfo:
         """
         return str(self.trigger)
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         if not self.modifiers:
             return str(self.trigger)
         else:
             return f"{self.trigger_label} & {self.modifiers}"
-
-    def __str__(self) -> str:
-        return repr(self)
 
     def __hotkey__(self):
         return Hotkey(self)
@@ -133,6 +131,16 @@ class HotkeyEvent:
     Represents a high-level event triggered by a hotkey, with a matching Command.
     """
 
-    hotkey: "HotkeyInfo"
+    binding: "Binding"
     event: InputEvent
-    command: "Command"
+
+    @property
+    def hotkey(self) -> "HotkeyInfo":
+        return self.binding.hotkey
+
+    def command(self) -> "Command":
+        return self.binding.command
+
+    def __str__(self):
+        dt = time.strftime("%H:%M:%S", time.localtime(self.event.timestamp))
+        return f"<HotkeyEvent {dt} :: {self.binding}>"

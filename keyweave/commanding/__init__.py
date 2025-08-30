@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 import inspect
-from typing import Any, Protocol, TYPE_CHECKING
+from typing import Any, Literal, Protocol, TYPE_CHECKING
 
 
 if TYPE_CHECKING:
@@ -17,6 +17,9 @@ class CommandMeta:
     description: str | None = field(default=None, kw_only=True)
     emoji: str | None = field(default=None, kw_only=True)
 
+    def __str__(self):
+        return f'Command("{self.label}")'
+
 
 @dataclass
 class Command:
@@ -26,6 +29,9 @@ class Command:
 
     info: CommandMeta
     handler: "FuncHotkeyHandler"
+
+    def __str__(self):
+        return str(self.info)
 
     def __get__(
         self, instance: object | None = None, owner: type | None = None
@@ -62,6 +68,9 @@ class CommandProducer:
     Represents an object that produces a command with an attached handler. When applied to a method,
     requires additional context to function properly.
     """
+
+    def __str__(self):
+        return str(self.cmd)
 
     def __init__(self, func: HotkeyHandler, cmd: CommandMeta):
         self.func = func

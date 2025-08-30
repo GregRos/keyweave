@@ -9,6 +9,10 @@ from keyweave.bindings import Binding
 from keyweave.commanding import CommandMeta
 from keyweave.layout._layout import Layout
 from keyweave.scheduling import Scheduler
+from keyweave._util.logging import keyweaveLogger
+
+
+layoutClassLogger = keyweaveLogger.getChild("LayoutClass")
 
 
 class LayoutClass(ABC):
@@ -61,7 +65,10 @@ class LayoutClass(ABC):
     def __new__(
         cls, name: str | None = None, scheduler: Scheduler | None = None
     ):
+
         obj = super().__new__(cls)
+        my_logger = layoutClassLogger.getChild(cls.__name__)
+        my_logger.info(f"Creating instance")
         layout = Layout(name or cls.__name__, scheduler=scheduler)
         for key in cls.__dict__.keys():
             # We need to get the attribute from the instance to apply
@@ -75,6 +82,8 @@ class LayoutClass(ABC):
                 case _:
                     pass
         if "__intercept__" in cls.__dict__:
+            my_logger.info(f"Registering __intercept__ method")
+
             intercept = cls.__dict__["__intercept__"]
             layout = layout.intercept(partial(intercept, obj))
         return layout

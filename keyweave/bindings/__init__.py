@@ -23,6 +23,9 @@ class Binding:
     command: Command
     _number_of_args: int = field(init=False)
 
+    def __str__(self):
+        return f"Binding({self.hotkey} → ⚡{self.command.info.label})"
+
     @property
     def handler(self) -> FuncHotkeyHandler:
         return self.command.handler
@@ -38,7 +41,7 @@ class Binding:
 
     def __call__(self, event: InputEvent, /):
         handler = self.handler
-        triggered_key_event = HotkeyEvent(self.hotkey, event, self.command)
+        triggered_key_event = HotkeyEvent(self, event)
         handler(triggered_key_event)
 
 

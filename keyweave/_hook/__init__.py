@@ -6,14 +6,20 @@ from keyweave.key_types import Key, KeyInputState, KeySet
 from keyboard import KeyboardEvent, hook_key, is_pressed, unhook
 
 from win32api import GetAsyncKeyState  # type: ignore
-
+from keyweave._util.logging import keyweaveLogger
 
 from keyweave.scheduling import Scheduler
+
+keyweaveHookLogger = keyweaveLogger.getChild("KeyHook")
 
 
 class KeyHook:
     _internal_handler: Any
     _lock = threading.Lock()
+
+    @property
+    def _logger(self):
+        return keyweaveHookLogger.getChild(f"{self.trigger}")
 
     def __init__(
         self,
@@ -27,6 +33,7 @@ class KeyHook:
         self.manufactured_handler = self._get_handler()
 
     def __enter__(self):
+        self._logger.info("Installing hook using keyboard package")
         self._internal_handler = hook_key(
             _get_keyboard_hook_id(self.trigger),
             self.manufactured_handler,
@@ -57,8 +64,14 @@ class KeyHook:
 
         def handler(info: KeyboardEvent):
             binding = get_best_binding(info)
+            event_state = _state_from_event(info)
             if not binding:
+                self._logger.debug(
+                    f"RECEIVED {event_state}; NO MATCHING BINDING"
+                )
+
                 return True
+            self._logger.debug(f"RECEIVED {event_state}; MATCHED {binding}")
 
             def binding_invoker():
                 binding(InputEvent(info.time))
@@ -125,3 +138,9 @@ def _is_state_active(state: KeyInputState):
 
 def _is_key_set_active(key_set: KeySet):
     return all(_is_state_active(key_state) for key_state in key_set)
+
+
+def _state_from_event(event: KeyboardEvent) -> KeyInputState:
+    return KeyInputState(
+        key=Key(event.name or ""), state=event.event_type or "down"
+    )

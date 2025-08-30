@@ -258,4 +258,7 @@ class KeySet:
         return joined
 
     def __str__(self) -> str:
-        return repr(self)
+        if not self.set:
+            return "[]"
+        joined = ", ".join(str(key) for key in self.set.values())
+        return f"{{{joined}}}"

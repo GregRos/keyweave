@@ -1,7 +1,7 @@
 import os
 import sys
 from time import sleep
-
+import log_setup
 from keyweave import (
     key,
     LayoutClass,
