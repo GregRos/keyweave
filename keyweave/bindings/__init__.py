@@ -24,7 +24,7 @@ class Binding:
     _number_of_args: int = field(init=False)
 
     def __str__(self):
-        return f"Binding({self.hotkey} → ⚡{self.command.info.label})"
+        return f"⛓️‍💥{self.hotkey} → ⚡{self.command.info.label}"
 
     @property
     def handler(self) -> FuncHotkeyHandler:

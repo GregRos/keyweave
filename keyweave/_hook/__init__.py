@@ -33,7 +33,7 @@ class KeyHook:
         self.manufactured_handler = self._get_handler()
 
     def __enter__(self):
-        self._logger.info("Installing hook using keyboard package")
+        self._logger.info("INSTALLING HOOK")
         self._internal_handler = hook_key(
             _get_keyboard_hook_id(self.trigger),
             self.manufactured_handler,
