@@ -23,12 +23,12 @@ class AsddBC(LayoutClass):
         print("Intercepted", intercepted)
         intercepted.next()
 
-    @(key.b & [key.shift, key.ctrl])
+    @(key.b.down & [key.shift, key.ctrl])
     @command(label="abc", description="ABC")
     def abc(self, e: HotkeyEvent):
         print(e)
 
-    @(key.z & [key.alt, ~key.ctrl] + [key.alt])
+    @(key.z.down & [key.alt, ~key.ctrl] + [key.alt])
     @command(label="xxx")
     def abce(self, e: HotkeyEvent):
         print(e)

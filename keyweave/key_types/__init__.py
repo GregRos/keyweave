@@ -157,6 +157,9 @@ class KeyInputState:
             )
         )
 
+    def __and__(self, other: "KeysInput"):
+        return self.modifiers(other)
+
     @property
     def state_char(self) -> str:
         return "↓" if self.state == "down" else "↑"
