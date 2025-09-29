@@ -33,6 +33,23 @@ files = [
 pyobjc = {version = "*", markers = "sys_platform == \"darwin\""}
 
 [[package]]
+name = "prettytable"
+version = "3.16.0"
+description = "A simple Python library for easily displaying tabular data in a visually appealing ASCII table format"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "prettytable-3.16.0-py3-none-any.whl", hash = "sha256:b5eccfabb82222f5aa46b798ff02a8452cf530a352c31bddfa29be41242863aa"},
+    {file = "prettytable-3.16.0.tar.gz", hash = "sha256:3c64b31719d961bf69c9a7e03d0c1e477320906a98da63952bc6698d6164ff57"},
+]
+
+[package.dependencies]
+wcwidth = "*"
+
+[package.extras]
+tests = ["pytest", "pytest-cov", "pytest-lazy-fixtures"]
+
+[[package]]
 name = "pyobjc"
 version = "11.1"
 description = "Python<->ObjC Interoperability Module"
@@ -3334,16 +3351,16 @@ files = [
 
 [[package]]
 name = "wcwidth"
-version = "0.2.13"
+version = "0.2.14"
 description = "Measures the displayed width of unicode strings in a terminal"
 optional = false
-python-versions = "*"
+python-versions = ">=3.6"
 files = [
-    {file = "wcwidth-0.2.13-py2.py3-none-any.whl", hash = "sha256:3da69048e4540d84af32131829ff948f1e022c1c6bdb8d6102117aac784f6859"},
-    {file = "wcwidth-0.2.13.tar.gz", hash = "sha256:72ea0c06399eb286d978fdedb6923a9eb47e1c486ce63e9b4e64fc18303972b5"},
+    {file = "wcwidth-0.2.14-py2.py3-none-any.whl", hash = "sha256:a7bb560c8aee30f9957e5f9895805edd20602f2d7f720186dfd906e82b4982e1"},
+    {file = "wcwidth-0.2.14.tar.gz", hash = "sha256:4d478375d31bc5395a3c55c40ccdf3354688364cd61c4f6adacaa9215d0b3605"},
 ]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.13"
-content-hash = "1c1ab13d51d81a76e84fd9b619aab0d2df1057bd6be77c24be0319abaa9eb436"
+content-hash = "1825ce4bf26b8fc275dcdb34743901367605628ce8fae7cdef96ee8bf5945e00"
