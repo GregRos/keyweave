@@ -59,6 +59,9 @@ class LayoutClass(ABC):
 
     """
 
+    def __post_init__(self):
+        pass
+
     def __intercept__(self, intercepted: HotkeyInterceptionEvent):
         pass
 
@@ -67,6 +70,7 @@ class LayoutClass(ABC):
     ):
 
         obj = super().__new__(cls)
+        obj.__post_init__()
         my_logger = layoutClassLogger.getChild(cls.__name__)
         my_logger.info(f"Creating instance")
         layout = Layout(name or cls.__name__, scheduler=scheduler)
