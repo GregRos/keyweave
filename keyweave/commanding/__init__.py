@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 import inspect
-from typing import Any, Literal, Protocol, TYPE_CHECKING
+from typing import Any, Protocol, TYPE_CHECKING
 
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ class CommandMeta:
     emoji: str | None = field(default=None, kw_only=True)
 
     def __str__(self):
-        return f'Command("{self.label}")'
+        return f"{self.emoji} {self.label}"
 
 
 @dataclass
@@ -37,6 +37,9 @@ class Command:
         self, instance: object | None = None, owner: type | None = None
     ) -> "Command":
         return self
+
+    def __str__(self):
+        return f"{self.info.emoji} {self.info.label}"
 
     def bind(self, hotkey: "Hotkey"):
         from ..bindings import Binding

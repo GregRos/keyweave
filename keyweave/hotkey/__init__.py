@@ -138,6 +138,7 @@ class HotkeyEvent:
     def hotkey(self) -> "HotkeyInfo":
         return self.binding.hotkey
 
+    @property
     def command(self) -> "Command":
         return self.binding.command
 

@@ -1,5 +1,8 @@
 from functools import total_ordering
-from typing import Iterable, Literal
+from typing import TYPE_CHECKING, Iterable, Literal
+
+if TYPE_CHECKING:
+    from keyweave.commanding import Command, CommandProducer
 
 
 @total_ordering
@@ -57,6 +60,14 @@ class Key:
         Whether this key is a mouse key.
         """
         return self.id.startswith("mouse:")
+
+    def __call__(self, cmd: "Command | CommandProducer"):
+        """
+        Binds a command or command producer to the hotkey. Typically used as a decorator.
+        """
+        from ..bindings import BindingProducer
+
+        return BindingProducer(cmd, self.down.modifiers([]))
 
     @property
     def is_keyboard(self):

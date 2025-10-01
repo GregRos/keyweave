@@ -1,7 +1,6 @@
+from typing import Callable
 from keyweave.interception import HotkeyInterceptionEvent
-from keyweave.key_types import KeyInput
 
-from keyweave.hotkey import Hotkey
 from abc import ABC
 from functools import partial
 
@@ -66,14 +65,19 @@ class LayoutClass(ABC):
         pass
 
     def __new__(
-        cls, name: str | None = None, scheduler: Scheduler | None = None
+        cls,
+        name: str | None = None,
+        scheduler: Scheduler | None = None,
+        on_error: Callable[[BaseException], None] | None = None,
     ):
 
         obj = super().__new__(cls)
         obj.__post_init__()
         my_logger = layoutClassLogger.getChild(cls.__name__)
         my_logger.info(f"Creating instance")
-        layout = Layout(name or cls.__name__, scheduler=scheduler)
+        layout = Layout(
+            name=name or cls.__name__, scheduler=scheduler, on_error=on_error
+        )
         for key in cls.__dict__.keys():
             # We need to get the attribute from the instance to apply
             # any __get__ decorators.

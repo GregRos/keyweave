@@ -1,5 +1,7 @@
 from typing import Any, Iterable
 
+from typing import Callable
+
 
 from keyweave.bindings import BindingCollection
 from keyweave.bindings import Binding
@@ -9,6 +11,7 @@ from keyweave.interception import HotkeyInterceptor, intercept_binding
 from keyweave.key_types import Key
 from keyweave._hook import KeyHook
 from keyweave.scheduling import default_scheduler, Scheduler
+import sys
 
 
 class Layout:
@@ -44,14 +47,21 @@ class Layout:
 
     def __init__(
         self,
+        *,
         name: str,
         scheduler: Scheduler | None = None,
+        on_error: Callable[[BaseException], None] | None = None,
         bindings: Iterable[Binding] = (),
     ):
-        def on_error(e: BaseException):
-            print(f"Error: {e}")
+        def default_on_error(e: BaseException):
+            import traceback
 
-        scheduler = scheduler or default_scheduler(on_error)
+            # Print the full exception with traceback to stderr so the error is visible.
+            traceback.print_exception(
+                type(e), e, e.__traceback__, file=sys.stderr
+            )
+
+        scheduler = scheduler or default_scheduler(on_error or default_on_error)
         self.name = name
         self._scheduler = scheduler
         self._map = BindingCollection()
@@ -68,9 +78,9 @@ class Layout:
 
     def intercept(self, interceptor: HotkeyInterceptor):
         return Layout(
-            self.name,
-            self._scheduler,
-            [
+            name=self.name,
+            scheduler=self._scheduler,
+            bindings=[
                 intercept_binding(binding, interceptor)
                 for binding in self._map.bindings
             ],
@@ -126,4 +136,4 @@ class Layout:
     ) -> "Layout":
         clean_dict = {k.__hotkey__().info: v for k, v in d.items()}
         xs = [Binding(k, v.__get__()) for k, v in clean_dict.items()]
-        return Layout(name, bindings=xs)
+        return Layout(name=name, bindings=xs)
