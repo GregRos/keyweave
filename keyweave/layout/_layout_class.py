@@ -9,6 +9,7 @@ from keyweave.commanding import CommandMeta
 from keyweave.layout._layout import Layout
 from keyweave.scheduling import Scheduler
 from keyweave._util.logging import keyweaveLogger
+from keyweave.util.reflect import get_attrs_down_to
 
 
 layoutClassLogger = keyweaveLogger.getChild("LayoutClass")
@@ -78,20 +79,19 @@ class LayoutClass(ABC):
         layout = Layout(
             name=name or cls.__name__, scheduler=scheduler, on_error=on_error
         )
-        for key in cls.__dict__.keys():
-            # We need to get the attribute from the instance to apply
-            # any __get__ decorators.
-            binding = getattr(obj, key, None)
-            match binding:
+        attrs = get_attrs_down_to(obj, LayoutClass)
+
+        for k, value in attrs.items():
+            if k == "__intercept__":
+                my_logger.info(f"Registering __intercept__ method")
+                layout = layout.intercept(partial(getattr(obj, k), obj))
+            match value:
                 case Binding() as b:
                     layout.add_binding(b)
                 case CommandMeta() as c:
-                    raise TypeError(f"Found unbound command: {c}")
+                    my_logger.warning(
+                        f"Command {c} is missing a hotkey binding decorator. It will be ignored."
+                    )
                 case _:
                     pass
-        if "__intercept__" in cls.__dict__:
-            my_logger.info(f"Registering __intercept__ method")
-
-            intercept = cls.__dict__["__intercept__"]
-            layout = layout.intercept(partial(intercept, obj))
         return layout
