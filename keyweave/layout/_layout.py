@@ -7,7 +7,10 @@ from keyweave.bindings import BindingCollection
 from keyweave.bindings import Binding
 from keyweave.commanding import Command, CommandProducer
 from keyweave.hotkey import Hotkey
-from keyweave.interception import HotkeyInterceptor, intercept_binding
+from keyweave.interception import (
+    FuncHotkeyInterceptor,
+    HotkeyInterceptor,
+)
 from keyweave.key_types import Key
 from keyweave._hook import KeyHook
 from keyweave.scheduling import default_scheduler, Scheduler
@@ -76,12 +79,16 @@ class Layout:
     def is_empty(self):
         return len(self._map) == 0
 
-    def intercept(self, interceptor: HotkeyInterceptor):
+    def intercept(self, interceptor: FuncHotkeyInterceptor) -> "Layout":
         return Layout(
             name=self.name,
             scheduler=self._scheduler,
             bindings=[
-                intercept_binding(binding, interceptor)
+                (
+                    binding.intercept(interceptor)
+                    if not binding.command.no_intercept
+                    else binding
+                )
                 for binding in self._map.bindings
             ],
         )

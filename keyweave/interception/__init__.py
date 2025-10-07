@@ -1,9 +1,13 @@
 from dataclasses import dataclass
-from typing import Protocol
+from typing import TYPE_CHECKING, Any, Awaitable, Protocol
 
-from keyweave.bindings import Binding
-from keyweave.commanding import Command, FuncHotkeyHandler
+from keyweave.commanding import FuncHotkeyHandler
 from keyweave.hotkey import HotkeyEvent
+from keyweave.shorthand import SimpleCoroutine
+from keyweave.util.event_loop import norm_maybe_async
+
+if TYPE_CHECKING:
+    from keyweave.layout._layout_class import LayoutClass
 
 
 @dataclass(init=False)
@@ -39,29 +43,29 @@ class HotkeyInterceptor(Protocol):
     A function that can intercept a hotkey event.
     """
 
-    def __call__(self, action: HotkeyInterceptionEvent): ...
+    def __call__(
+        self, action: HotkeyInterceptionEvent
+    ) -> None | SimpleCoroutine[None]: ...
 
 
-def intercept_binding(target: Binding, *interceptors: HotkeyInterceptor):
-    handler = target.handler
-    for interceptor in interceptors:
-        handler = _wrap_interceptor(interceptor, handler)
-    return Binding(
-        target.hotkey,
-        Command(
-            info=target.command.info,
-            handler=handler,
-        ),
-    )
+class FuncHotkeyInterceptor(Protocol):
+    """
+    A function that can intercept a hotkey event.
+    """
+
+    def __call__(
+        self, action: HotkeyInterceptionEvent, /
+    ) -> None | SimpleCoroutine[None]: ...
 
 
-def _wrap_interceptor(
-    interceptor: HotkeyInterceptor, handler: FuncHotkeyHandler
-) -> FuncHotkeyHandler:
-    def _handler(e: HotkeyEvent):
-        interception = HotkeyInterceptionEvent(e, handler)
-        interceptor(interception)
-        if not interception.handled:
-            raise ValueError(f"Interceptor {interceptor} did not handle {e}")
+class MethodHotkeyInterceptor(Protocol):
+    """
+    A method that can intercept a hotkey event.
+    """
 
-    return _handler
+    def __call__(
+        self, instance: Any, action: HotkeyInterceptionEvent, /
+    ) -> None | SimpleCoroutine[None]: ...
+
+
+type AnyHotkeyInterceptor = (FuncHotkeyInterceptor | MethodHotkeyInterceptor)

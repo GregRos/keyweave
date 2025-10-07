@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "keyweave"
-version = "0.15.0"
+version = "0.16.0"
 description = "Framework for defining global hotkeys."
 authors = ["GregRos <gregros@gregros.dev>"]
 readme = "README.md"
@@ -29,5 +29,6 @@ autoImportCompletions = true
 autoIndent = true
 diagnosticMode = "workspace"
 ignore = ["**/Lib/*.py"]
+reportUnusedImport = false
 [tool.black]
 line-length = 80

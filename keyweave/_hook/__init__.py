@@ -66,15 +66,11 @@ class KeyHook:
             binding = get_best_binding(info)
             event_state = _state_from_event(info)
             if not binding:
-                self._logger.debug(
-                    f"RECEIVED {event_state}; NO MATCHING BINDING"
-                )
-
                 return True
             self._logger.debug(f"RECEIVED {event_state}; MATCHED {binding}")
 
             def binding_invoker():
-                binding(InputEvent(info.time))
+                return binding(InputEvent(info.time))
 
             self._scheduler(binding_invoker)
             return False

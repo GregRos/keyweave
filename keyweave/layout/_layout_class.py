@@ -1,18 +1,18 @@
-from typing import Callable
+from typing import Awaitable, Callable
 from keyweave.interception import HotkeyInterceptionEvent
 
 from abc import ABC
-from functools import partial
 
 from keyweave.bindings import Binding
 from keyweave.commanding import CommandMeta
 from keyweave.layout._layout import Layout
 from keyweave.scheduling import Scheduler
 from keyweave._util.logging import keyweaveLogger
+from keyweave.shorthand import SimpleCoroutine
 from keyweave.util.reflect import get_attrs_down_to
 
 
-layoutClassLogger = keyweaveLogger.getChild("LayoutClass")
+my_logger = keyweaveLogger.getChild("LayoutClass")
 
 
 class LayoutClass(ABC):
@@ -62,7 +62,9 @@ class LayoutClass(ABC):
     def __post_init__(self):
         pass
 
-    def __intercept__(self, intercepted: HotkeyInterceptionEvent):
+    def __intercept__(
+        self, intercepted: HotkeyInterceptionEvent
+    ) -> None | SimpleCoroutine[None]:
         pass
 
     def __new__(
@@ -74,17 +76,13 @@ class LayoutClass(ABC):
 
         obj = super().__new__(cls)
         obj.__post_init__()
-        my_logger = layoutClassLogger.getChild(cls.__name__)
         my_logger.info(f"Creating instance")
         layout = Layout(
             name=name or cls.__name__, scheduler=scheduler, on_error=on_error
         )
         attrs = get_attrs_down_to(obj, LayoutClass)
 
-        for k, value in attrs.items():
-            if k == "__intercept__":
-                my_logger.info(f"Registering __intercept__ method")
-                layout = layout.intercept(partial(getattr(obj, k), obj))
+        for _, value in attrs.items():
             match value:
                 case Binding() as b:
                     layout.add_binding(b)
@@ -94,4 +92,7 @@ class LayoutClass(ABC):
                     )
                 case _:
                     pass
+
+        if hasattr(obj, "__intercept__"):
+            layout = layout.intercept(obj.__intercept__)  # type: ignore
         return layout

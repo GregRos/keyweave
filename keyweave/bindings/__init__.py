@@ -1,12 +1,13 @@
 from dataclasses import dataclass, field
 import inspect
-from typing import Any, Iterable, Iterator, overload
+from typing import Any, Awaitable, Iterable, Iterator, overload
 
 from keyweave.commanding import (
     Command,
     CommandProducer,
     FuncHotkeyHandler,
 )
+from keyweave.interception import FuncHotkeyInterceptor, HotkeyInterceptionEvent
 from keyweave.key_types import Key, KeyInputState
 from keyweave.hotkey import (
     Hotkey,
@@ -42,7 +43,18 @@ class Binding:
     def __call__(self, event: InputEvent, /):
         handler = self.handler
         triggered_key_event = HotkeyEvent(self, event)
-        handler(triggered_key_event)
+        return handler(triggered_key_event)
+
+    def intercept(self, *interceptors: FuncHotkeyInterceptor):
+        handler = self.handler
+        return Binding(
+            self.hotkey,
+            Command(
+                info=self.command.info,
+                handler=handler,
+                no_intercept=self.command.no_intercept,
+            ).intercept(*interceptors),
+        )
 
 
 class BindingCollection(Iterable["KeyBindingCollection"]):

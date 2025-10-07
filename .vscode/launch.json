@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: messing_with_keys",
+      "name": "messing_with_keys",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/example/messing_with_keys.py",
@@ -11,7 +11,7 @@
       "internalConsoleOptions": "neverOpen"
     },
     {
-      "name": "Python: set_hooks",
+      "name": "set_hooks",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}\\example\\set_hooks.py",
@@ -20,11 +20,11 @@
       "internalConsoleOptions": "neverOpen"
     },
     {
-      "name": "Python: class",
+      "name": "async_class",
       "type": "debugpy",
       "request": "launch",
 
-      "program": "${workspaceFolder}/example/class.py",
+      "program": "${workspaceFolder}/example/async_class.py",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     }
