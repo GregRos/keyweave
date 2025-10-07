@@ -60,11 +60,18 @@ class LayoutClass(ABC):
     """
 
     def __post_init__(self):
+        """
+        Executed internally after an instance of this class is created, before a Layout is returned.
+        """
         pass
 
     def __intercept__(
         self, intercepted: HotkeyInterceptionEvent
     ) -> None | SimpleCoroutine[None]:
+        """
+        The default interceptor. If overriden, intercepts all hotkey events for this layout that haven't
+        configured interception.
+        """
         pass
 
     def __new__(
@@ -73,7 +80,9 @@ class LayoutClass(ABC):
         scheduler: Scheduler | None = None,
         on_error: Callable[[BaseException], None] | None = None,
     ):
-
+        """
+        Always returns a Layout instance wrapping this class instance.
+        """
         obj = super().__new__(cls)
         obj.__post_init__()
         my_logger.info(f"Creating instance")

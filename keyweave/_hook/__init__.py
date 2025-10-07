@@ -5,10 +5,10 @@ from keyweave.hotkey import InputEvent
 from keyweave.key_types import Key, KeyInputState, KeySet
 from keyboard import KeyboardEvent, hook_key, is_pressed, unhook
 
-from win32api import GetAsyncKeyState  # type: ignore
 from keyweave._util.logging import keyweaveLogger
 
 from keyweave.scheduling import Scheduler
+from keyweave.util.input import get_keyboard_hook_id, is_key_pressed
 
 keyweaveHookLogger = keyweaveLogger.getChild("KeyHook")
 
@@ -35,7 +35,7 @@ class KeyHook:
     def __enter__(self):
         self._logger.info("INSTALLING HOOK")
         self._internal_handler = hook_key(
-            _get_keyboard_hook_id(self.trigger),
+            get_keyboard_hook_id(self.trigger.id),
             self.manufactured_handler,
             suppress=True,
         )
@@ -78,56 +78,12 @@ class KeyHook:
         return handler
 
 
-def _get_keyboard_hook_id(key: Key) -> str:
-    match key.id:
-        case "num:enter":
-            return "enter"
-        case "num:dot" | "num:.":
-            return "."
-        case "num:star" | "num:*" | "num:multiply":
-            return "*"
-        case "num:plus" | "num:+":
-            return "+"
-        case "num:minus" | "num:-":
-            return "-"
-        case "num:slash" | "num:/":
-            return "/"
-        case "mouse:1":
-            return "left"
-        case "mouse:2":
-            return "right"
-        case "mouse:3":
-            return "middlemouse"
-        case "mouse:4":
-            return "x"
-        case "mouse:5":
-            return "x2"
-        case _:
-            return key.id.replace("num:", "num ")
-
-
-def _get_windows_id_for_mouse_key(key: Key) -> int:
-    if key.is_mouse:
-        return int(key.id.replace("mouse:", ""))
-    raise ValueError("Key is not a mouse key")
-
-
-def _is_pressed(key: Key):
-    if key.is_mouse:
-        id = _get_windows_id_for_mouse_key(key)
-        pr: Any = GetAsyncKeyState(id) & 0x8000
-        return pr
-    else:
-        hook_id = _get_keyboard_hook_id(key)
-        return is_pressed(hook_id)
-
-
 def _is_state_active(state: KeyInputState):
     match state.state:
         case "down":
-            return _is_pressed(state.key)
+            return is_key_pressed(state.key.id)
         case "up":
-            return not _is_pressed(state.key)
+            return not is_key_pressed(state.key.id)
         case _:
             raise ValueError(f"Unknown key state: {state.state}")
 

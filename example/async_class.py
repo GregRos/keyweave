@@ -32,7 +32,7 @@ class AsddBC(LayoutClass):
 
     @(key.y.down & [key.shift, key.ctrl])
     @command(interceptor=also_interceptor)
-    async def ab(self, e: HotkeyEvent):
+    async def affb(self, e: HotkeyEvent):
         await sleep(0.3)
         print(e)
 

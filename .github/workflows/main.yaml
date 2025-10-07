@@ -1,4 +1,4 @@
-name: CI
+name: KEYWEAVE
 
 on:
     push:
@@ -39,7 +39,7 @@ jobs:
                   python -m pip install poetry
 
             - name: POETRY INSTALL
-              run: poetry install
+              run: poetry install --with dev
 
             - name: BLACK CHECK
               run: poetry run black --check .
