@@ -32,3 +32,9 @@ ignore = ["**/Lib/*.py"]
 reportUnusedImport = false
 [tool.black]
 line-length = 80
+
+[dependency-groups]
+dev = [
+    "pyright (>=1.1.406,<2.0.0)",
+    "black (>=25.9.0,<26.0.0)"
+]
