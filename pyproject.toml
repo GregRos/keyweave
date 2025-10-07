@@ -33,7 +33,6 @@ ignore = ["**/Lib/*.py"]
 reportUnusedImport = false
 [tool.black]
 line-length = 80
-
 [tool.poetry.group.dev.dependencies]
 pyright = ">=1.1.406,<2.0.0"
 black = ">=25.9.0,<26.0.0"
