@@ -8,7 +8,7 @@ from typing import Any, Callable, Coroutine
 
 from keyweave.shorthand import SimpleCoroutine
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("keyweave")
 
 
 def create_event_loop(trace_name: str, workers: int = 1) -> AbstractEventLoop:

@@ -10,7 +10,7 @@ from keyweave._util.logging import keyweaveLogger
 from keyweave.scheduling import Scheduler
 from keyweave.util.input import get_keyboard_hook_id, is_key_pressed
 
-keyweaveHookLogger = keyweaveLogger.getChild("KeyHook")
+keyweaveHookLogger = keyweaveLogger
 
 
 class KeyHook:
@@ -19,7 +19,7 @@ class KeyHook:
 
     @property
     def _logger(self):
-        return keyweaveHookLogger.getChild(f"{self.trigger}")
+        return keyweaveHookLogger
 
     def __init__(
         self,
@@ -33,7 +33,7 @@ class KeyHook:
         self.manufactured_handler = self._get_handler()
 
     def __enter__(self):
-        self._logger.info("INSTALLING HOOK")
+        self._logger.info("Installing hook for %s", self.trigger)
         self._internal_handler = hook_key(
             get_keyboard_hook_id(self.trigger.id),
             self.manufactured_handler,

@@ -3,8 +3,8 @@ from keyweave.interception import HotkeyInterceptionEvent
 
 from abc import ABC
 
-from keyweave.bindings import Binding
-from keyweave.commanding import CommandMeta
+from keyweave.bindings import Binding, BindingProducer
+from keyweave.commanding import Command, CommandMeta, CommandProducer
 from keyweave.layout._layout import Layout
 from keyweave.scheduling import Scheduler
 from keyweave._util.logging import keyweaveLogger
@@ -12,7 +12,7 @@ from keyweave.shorthand import SimpleCoroutine
 from keyweave.util.reflect import get_attrs_down_to
 
 
-my_logger = keyweaveLogger.getChild("LayoutClass")
+my_logger = keyweaveLogger
 
 
 class LayoutClass(ABC):
@@ -59,6 +59,8 @@ class LayoutClass(ABC):
 
     """
 
+    _layout: "Layout"
+
     def __post_init__(self):
         """
         Executed internally after an instance of this class is created, before a Layout is returned.
@@ -84,12 +86,20 @@ class LayoutClass(ABC):
         Always returns a Layout instance wrapping this class instance.
         """
         obj = super().__new__(cls)
-        obj.__post_init__()
         my_logger.info(f"Creating instance")
         layout = Layout(
             name=name or cls.__name__, scheduler=scheduler, on_error=on_error
         )
-        attrs = get_attrs_down_to(obj, LayoutClass)
+        obj._layout = layout
+        obj.__post_init__()
+
+        attrs = get_attrs_down_to(
+            obj,
+            LayoutClass,
+            resolve_descriptor=lambda x: isinstance(
+                x, (CommandProducer, Command, Binding, BindingProducer)
+            ),
+        )
 
         for _, value in attrs.items():
             match value:

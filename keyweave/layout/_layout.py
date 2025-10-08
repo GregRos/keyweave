@@ -2,6 +2,8 @@ from typing import Any, Iterable
 
 from typing import Callable
 
+from pyee import EventEmitter
+
 
 from keyweave.bindings import BindingCollection
 from keyweave.bindings import Binding
@@ -13,11 +15,12 @@ from keyweave.interception import (
 )
 from keyweave.key_types import Key
 from keyweave._hook import KeyHook
+from keyweave.print.style import style
 from keyweave.scheduling import default_scheduler, Scheduler
 import sys
 
 
-class Layout:
+class Layout(EventEmitter):
     """
     A Hotkey layout consisting of `Binding` objects that link Hotkey events to Commands with attached handlers.
 
@@ -56,6 +59,8 @@ class Layout:
         on_error: Callable[[BaseException], None] | None = None,
         bindings: Iterable[Binding] = (),
     ):
+        super().__init__()
+
         def default_on_error(e: BaseException):
             import traceback
 
@@ -103,12 +108,12 @@ class Layout:
     def __len__(self):
         return len(self._map)
 
-    def __iter__(self):
-        return iter(self._map)
-
     @property
     def bindings(self):
         return self._map.bindings
+
+    def __iter__(self):
+        return iter(self._map.bindings)
 
     def _get_key_hooks(self):
         return [
@@ -117,15 +122,16 @@ class Layout:
         ]
 
     def __enter__(self):
-        from ._print_layout import print_layout_table
+        from ._print_layout import print_entering_message
 
-        print(f"➡️ {print_layout_table(self)}")
+        print_entering_message(self)
         key_hooks = self._get_key_hooks()
         registered: list[KeyHook] = []
         try:
             for hook in key_hooks:
                 hook.__enter__()
                 registered.append(hook)
+            self.emit("enter", self)
         except:
             for hook in registered:
                 hook.__exit__()
@@ -135,6 +141,7 @@ class Layout:
     def __exit__(self, *args: Any):
         for hook in self._registered:
             hook.__exit__()
+        self.emit("exit", self)
         return False
 
     @staticmethod

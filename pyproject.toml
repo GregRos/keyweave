@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "keyweave"
-version = "0.16.0"
+version = "0.16.1"
 description = "Framework for defining global hotkeys."
 authors = ["GregRos <gregros@gregros.dev>"]
 readme = "README.md"
@@ -18,6 +18,10 @@ pywin32 = { version = "^311", markers = "sys_platform == 'win32'" }
 beautifultable = "^1.1.0"
 prettytable = "^3.12.0"
 mouse = { version = "^0.7.1", markers = "sys_platform != 'win32'" }
+pyyaml = "^6.0.3"
+termcolor = "^3.1.0"
+python-baseconv = "^1.2.2"
+pyee = "^13.0.0"
 
 
 [build-system]

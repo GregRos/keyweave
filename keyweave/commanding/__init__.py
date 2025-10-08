@@ -16,6 +16,7 @@ from typing import (
 
 
 from keyweave.shorthand import SimpleCoroutine
+from keyweave.util.dict import default_dicts, merge_dicts
 from keyweave.util.reflect import (
     clean_method_name,
     get_self_dict_restricted,
@@ -49,20 +50,27 @@ class CommandMeta:
     label: str | None = field(default=None)
     description: str | None = field(default=None)
     emoji: str | None = field(default=None)
+    metadata: Any | None = field(default=None)
 
     def __str__(self):
-        return f"{self.emoji} {self.label}"
+        text = list[str]()
+        if self.emoji:
+            text.append(self.emoji)
+        if self.label:
+            text.append(self.label)
+        return " ".join(text) if text else "<unnamed command>"
 
     def with_defaults(self, **kwargs: Unpack[CommandMetaProperties]):
-        return CommandMeta(**kwargs).with_changes(
-            **get_self_dict_restricted(self, CommandMeta)
+        attrs = default_dicts(
+            get_self_dict_restricted(self, CommandMeta), kwargs
         )
+        return CommandMeta(**attrs)
 
     def with_changes(
         self,
         **kwargs: Unpack[CommandMetaProperties],
     ) -> "CommandMeta":
-        attrs = {**get_self_dict_restricted(self, CommandMeta), **kwargs}
+        attrs = merge_dicts(get_self_dict_restricted(self, CommandMeta), kwargs)
         return CommandMeta(**attrs)  # type: ignore[argument]
 
 

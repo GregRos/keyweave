@@ -12,6 +12,6 @@ from keyweave.layout._layout import Layout
 from keyweave import scheduling
 from keyweave import key
 from keyweave.hotkey import HotkeyEvent
-from keyweave.commanding import command
+from keyweave.commanding import command, Command, CommandProducer
 from keyweave.key_types import Key
 from keyweave.interception import HotkeyInterceptionEvent

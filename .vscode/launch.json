@@ -7,7 +7,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/example/messing_with_keys.py",
       "console": "integratedTerminal",
-
+      "justMyCode": false,
       "internalConsoleOptions": "neverOpen"
     },
     {
@@ -17,12 +17,14 @@
       "program": "${workspaceFolder}\\example\\set_hooks.py",
       "console": "integratedTerminal",
       "python": "${command:python.interpreterPath}",
-      "internalConsoleOptions": "neverOpen"
+      "internalConsoleOptions": "neverOpen",
+      "justMyCode": false
     },
     {
       "name": "async_class",
       "type": "debugpy",
       "request": "launch",
+      "justMyCode": false,
 
       "program": "${workspaceFolder}/example/async_class.py",
       "console": "integratedTerminal",

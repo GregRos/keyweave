@@ -61,7 +61,10 @@ class AsddBC(LayoutClass):
         print(e)
 
     @(key.a & [key.shift, key.ctrl])
-    @command(label="abc", description="ABC")
+    @command(
+        label="abc",
+        description="ABC long description here to test wrapping and stuff",
+    )
     async def abcd(self, e: HotkeyEvent):
         await sleep(0.3)
         print(e)
