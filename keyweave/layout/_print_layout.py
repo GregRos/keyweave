@@ -6,7 +6,6 @@ from collections.abc import Iterable
 from itertools import groupby
 import re
 from typing import Any
-from beautifultable import BeautifulTable, ALIGN_LEFT
 from yaml import Dumper, dump
 
 from keyweave.bindings import Binding
