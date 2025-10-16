@@ -83,6 +83,9 @@ class Key:
     def specificity(self):
         return 1
 
+    def __getitem__(self, other: tuple["KeysInput", ...]):
+        return self & [x for y in other for x in y]
+
     def __and__(self, other: "KeysInput"):
         """
         Creates a Hotkey using the left key as a trigger (down event) and the right keys as modifiers.
@@ -168,6 +171,9 @@ class KeyInputState:
             )
         )
 
+    def __getitem__(self, other: tuple["KeysInput", ...]):
+        return self & [x for y in other for x in y]
+
     def __and__(self, other: "KeysInput"):
         return self.modifiers(other)
 
@@ -193,7 +199,7 @@ class KeyInputState:
 
 type KeyInput = "str | Key"
 
-type KeysInput = KeySet | Iterable[Key | KeyInputState]
+type KeysInput = KeySet | Iterable[Key | KeyInputState] | Key
 
 
 @total_ordering

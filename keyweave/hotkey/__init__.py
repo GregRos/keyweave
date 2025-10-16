@@ -90,6 +90,9 @@ class Hotkey:
         """
         return self.info.trigger.is_up
 
+    def __getitem__(self, other: tuple[KeysInput, ...]):
+        return self & [x for y in other for x in y]
+
     def __and__(self, other: KeysInput):
         """
         Adds modifiers to a Hotkey.
