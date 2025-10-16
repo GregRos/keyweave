@@ -1,4 +1,6 @@
-from typing import Any, Iterable
+from asyncio.constants import THREAD_JOIN_TIMEOUT
+import threading
+from typing import Any, Iterable, Literal, overload
 
 from typing import Callable
 
@@ -18,9 +20,10 @@ from keyweave._hook import KeyHook
 from keyweave.print.style import style
 from keyweave.scheduling import default_scheduler, Scheduler
 import sys
+from threading import Event
 
 
-class Layout(EventEmitter):
+class Layout:
     """
     A Hotkey layout consisting of `Binding` objects that link Hotkey events to Commands with attached handlers.
 
@@ -47,9 +50,11 @@ class Layout(EventEmitter):
     You can also create a layout using a class by subclassing `LayoutClass`.
     """
 
+    _emitter: EventEmitter
     _registered: list[KeyHook]
     _map: BindingCollection
     _active: bool = False
+    _active_event: Event
 
     def __init__(
         self,
@@ -60,6 +65,9 @@ class Layout(EventEmitter):
         bindings: Iterable[Binding] = (),
     ):
         super().__init__()
+        self._emitter = EventEmitter()
+        e = self._active_event = Event()
+        e.set()
 
         def default_on_error(e: BaseException):
             import traceback
@@ -76,6 +84,35 @@ class Layout(EventEmitter):
         for binding in bindings:
             self.add_binding(binding)
 
+    @overload
+    def on(
+        self, event: Literal["enter"], cb: Callable[["Layout"], None]
+    ) -> None: ...
+    @overload
+    def on(
+        self, event: Literal["exit"], cb: Callable[["Layout"], None]
+    ) -> None: ...
+
+    def on(self, event: str, cb: Callable[..., None]) -> None:
+        self._emitter.on(event, cb)
+
+    @overload
+    def once(
+        self, event: Literal["enter"], cb: Callable[["Layout"], None]
+    ) -> None: ...
+    @overload
+    def once(
+        self, event: Literal["exit"], cb: Callable[["Layout"], None]
+    ) -> None: ...
+    def once(self, event: str, cb: Callable[..., None]) -> None:
+        self._emitter.once(event, cb)  # type: ignore
+
+    def remove_listener(self, event: str, cb: Callable[..., None]) -> None:
+        self._emitter.remove_listener(event, cb)  # type: ignore
+
+    def remove_all_listeners(self, event: str) -> None:
+        self._emitter.remove_all_listeners(event)  # type: ignore
+
     def __iadd__(self, binding: Binding):
         self.add_binding(binding)
         return self
@@ -85,7 +122,7 @@ class Layout(EventEmitter):
         return len(self._map) == 0
 
     def intercept(self, interceptor: FuncHotkeyInterceptor) -> "Layout":
-        return Layout(
+        lt = Layout(
             name=self.name,
             scheduler=self._scheduler,
             bindings=[
@@ -97,6 +134,9 @@ class Layout(EventEmitter):
                 for binding in self._map.bindings
             ],
         )
+        lt._emitter = self._emitter
+        lt._active_event = self._active_event
+        return lt
 
     @property
     def active(self):
@@ -131,17 +171,19 @@ class Layout(EventEmitter):
             for hook in key_hooks:
                 hook.__enter__()
                 registered.append(hook)
-            self.emit("enter", self)
+            self._emitter.emit("enter", self)
         except:
             for hook in registered:
                 hook.__exit__()
             raise
         self._registered = key_hooks
+        self._active_event.clear()
+        return self._active_event
 
     def __exit__(self, *args: Any):
         for hook in self._registered:
             hook.__exit__()
-        self.emit("exit", self)
+        self._emitter.emit("exit", self)
         return False
 
     @staticmethod

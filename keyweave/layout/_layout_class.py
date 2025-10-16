@@ -61,6 +61,12 @@ class LayoutClass(ABC):
 
     _layout: "Layout"
 
+    def signal_stop(self):
+        if not self._layout._active_event.is_set():  # type: ignore
+            self._layout._active_event.set()  # type: ignore
+        else:
+            raise RuntimeError("Layout is not active")
+
     def __post_init__(self):
         """
         Executed internally after an instance of this class is created, before a Layout is returned.

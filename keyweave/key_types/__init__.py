@@ -83,7 +83,7 @@ class Key:
     def specificity(self):
         return 1
 
-    def __getitem__(self, other: tuple["KeysInput", ...] | "KeysInput"):
+    def __getitem__(self, other: "tuple[KeysInput, ...] | KeysInput"):
         return self & flatten_getitem_args(other)
 
     def __and__(self, other: "KeysInput"):
@@ -171,7 +171,7 @@ class KeyInputState:
             )
         )
 
-    def __getitem__(self, other: tuple["KeysInput", ...] | "KeysInput"):
+    def __getitem__(self, other: "tuple[KeysInput, ...] | KeysInput"):
         return self & flatten_getitem_args(other)
 
     def __and__(self, other: "KeysInput"):

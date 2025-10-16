@@ -54,7 +54,7 @@ w = Key("w")
 x = Key("x")
 y = Key("y")
 z = Key("z")
-
+esc = Key("esc")
 enter = Key("enter")
 space = Key("space")
 backspace = Key("backspace")

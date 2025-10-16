@@ -6,15 +6,14 @@ authors = ["GregRos <gregros@gregros.dev>"]
 readme = "README.md"
 license = "MIT"
 homepage = "https://github.com/GregRos/keyweave"
+[[tool.poetry.include]]
+path = "keyweave/"
 
-[[tool.poetry.packages]]
-include = "keyweave"
+[[tool.poetry.include]]
+path = "README.md"
 
-[[tool.poetry.packages]]
-include = "README.md"
-
-[[tool.poetry.packages]]
-include = "LICENSE.md"
+[[tool.poetry.include]]
+path = "LICENSE.md"
 
 # Ship the PEP 561 marker in the WHEEL
 [[tool.poetry.include]]
@@ -47,6 +46,7 @@ ignore = [
     "**/site-packages/**",
     "**/.venv/**/*",
     "**/dist/**/*",
+    "**/.vscode*/**/*",
     "**/*.pyi",
 ]
 exclude = ["**/site-packages/**", "**/.venv/**/*", "**/dist/**/*", "**/*.pyi"]

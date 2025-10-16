@@ -19,6 +19,9 @@ sys.path.insert(
 class AsddBC(LayoutClass):
     a = 1
 
+    def __post_init__(self):
+        self._layout.on("enter", lambda _: print("Entered layout"))
+
     async def __intercept__(self, intercepted: HotkeyInterceptionEvent):
         print("A", self.a)
         print("Intercepted", intercepted)
@@ -29,6 +32,11 @@ class AsddBC(LayoutClass):
         print("Also intercepted", intercepted)
         intercepted.end()
         print("Ended!")
+
+    @(key.esc.down[key.shift])
+    @command(label="Exit", description="Exit the layout")
+    async def exit_layout(self, e: HotkeyEvent):
+        self.signal_stop()
 
     @(key.y.down[key.shift, key.ctrl])
     @command(interceptor=also_interceptor)
@@ -84,5 +92,5 @@ class AsddBC(LayoutClass):
 
 lt = AsddBC()
 
-with lt:
-    sync_sleep(1000)
+with lt as e:
+    e.wait()
