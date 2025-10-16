@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "keyweave"
-version = "0.18.2"
+version = "0.18.3"
 description = "Framework for defining global hotkeys."
 authors = ["GregRos <gregros@gregros.dev>"]
 readme = "README.md"
@@ -38,12 +38,12 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 [tool.pyright]
 typeCheckingMode = "strict"
-exclude = ["**/site-packages/**"]
 autoImportCompletions = true
 autoIndent = true
 diagnosticMode = "workspace"
-ignore = ["**/Lib/*.py"]
 reportUnusedImport = false
+ignore = ["**/Lib/*.py", "**/site-packages/**", ".venv/**/*", "**/dist"]
+exclude = ["**/site-packages/**", ".venv/**/*", "**/dist"]
 [tool.black]
 line-length = 80
 [tool.poetry.group.dev.dependencies]
