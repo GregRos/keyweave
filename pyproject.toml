@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "keyweave"
-version = "0.18.1"
+version = "0.18.2"
 description = "Framework for defining global hotkeys."
 authors = ["GregRos <gregros@gregros.dev>"]
 readme = "README.md"
