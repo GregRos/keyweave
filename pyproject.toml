@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "keyweave"
-version = "0.18.3"
+version = "0.18.5"
 description = "Framework for defining global hotkeys."
 authors = ["GregRos <gregros@gregros.dev>"]
 readme = "README.md"
@@ -23,7 +23,7 @@ format = "wheel"
 
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = ">=3.13,<3.15"
 keyboard = "^0.13.5"
 pywin32 = { version = "^311", markers = "sys_platform == 'win32'" }
 mouse = { version = "^0.7.1", markers = "sys_platform != 'win32'" }
@@ -42,8 +42,14 @@ autoImportCompletions = true
 autoIndent = true
 diagnosticMode = "workspace"
 reportUnusedImport = false
-ignore = ["**/Lib/*.py", "**/site-packages/**", ".venv/**/*", "**/dist"]
-exclude = ["**/site-packages/**", ".venv/**/*", "**/dist"]
+ignore = [
+    "**/Lib/*.py",
+    "**/site-packages/**",
+    "**/.venv/**/*",
+    "**/dist/**/*",
+    "**/*.pyi",
+]
+exclude = ["**/site-packages/**", "**/.venv/**/*", "**/dist/**/*", "**/*.pyi"]
 [tool.black]
 line-length = 80
 [tool.poetry.group.dev.dependencies]

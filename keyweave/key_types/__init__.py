@@ -83,12 +83,8 @@ class Key:
     def specificity(self):
         return 1
 
-    def __getitem__(self, other: tuple["KeysInput", ...]):
-        return self & [
-            y
-            for x in other
-            for y in ([x] if isinstance(x, (Key, KeyInputState)) else x)
-        ]
+    def __getitem__(self, other: tuple["KeysInput", ...] | "KeysInput"):
+        return self & flatten_getitem_args(other)
 
     def __and__(self, other: "KeysInput"):
         """
@@ -175,8 +171,8 @@ class KeyInputState:
             )
         )
 
-    def __getitem__(self, other: tuple["KeysInput", ...]):
-        return self & flatten_keys_input(other)
+    def __getitem__(self, other: tuple["KeysInput", ...] | "KeysInput"):
+        return self & flatten_getitem_args(other)
 
     def __and__(self, other: "KeysInput"):
         return self.modifiers(other)
@@ -206,9 +202,10 @@ type KeyInput = "str | Key"
 type KeysInput = KeySet | Iterable[Key | KeyInputState] | Key | KeyInputState
 
 
-def flatten_keys_input(
-    inputs: tuple[KeysInput, ...],
+def flatten_getitem_args(
+    inputs: tuple[KeysInput, ...] | KeysInput,
 ) -> list[Key | KeyInputState]:
+    inputs = inputs if isinstance(inputs, tuple) else (inputs,)
     return [
         y
         for x in inputs

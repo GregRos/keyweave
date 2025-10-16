@@ -3,7 +3,13 @@ import time
 from typing import TYPE_CHECKING
 
 from keyweave.commanding import CommandProducer
-from keyweave.key_types import Key, KeyInputState, KeySet, KeysInput
+from keyweave.key_types import (
+    Key,
+    KeyInputState,
+    KeySet,
+    KeysInput,
+    flatten_getitem_args,
+)
 
 if TYPE_CHECKING:
     from keyweave.commanding import Command
@@ -90,12 +96,8 @@ class Hotkey:
         """
         return self.info.trigger.is_up
 
-    def __getitem__(self, other: tuple[KeysInput, ...]):
-        return self & [
-            y
-            for x in other
-            for y in ([x] if isinstance(x, (Key, KeyInputState)) else x)
-        ]
+    def __getitem__(self, other: tuple[KeysInput, ...] | KeysInput):
+        return self & flatten_getitem_args(other)
 
     def __and__(self, other: KeysInput):
         """
