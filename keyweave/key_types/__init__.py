@@ -84,7 +84,11 @@ class Key:
         return 1
 
     def __getitem__(self, other: tuple["KeysInput", ...]):
-        return self & [x for y in other for x in y]
+        return self & [
+            y
+            for x in other
+            for y in ([x] if isinstance(x, (Key, KeyInputState)) else x)
+        ]
 
     def __and__(self, other: "KeysInput"):
         """
@@ -172,7 +176,7 @@ class KeyInputState:
         )
 
     def __getitem__(self, other: tuple["KeysInput", ...]):
-        return self & [x for y in other for x in y]
+        return self & flatten_keys_input(other)
 
     def __and__(self, other: "KeysInput"):
         return self.modifiers(other)
@@ -199,7 +203,17 @@ class KeyInputState:
 
 type KeyInput = "str | Key"
 
-type KeysInput = KeySet | Iterable[Key | KeyInputState] | Key
+type KeysInput = KeySet | Iterable[Key | KeyInputState] | Key | KeyInputState
+
+
+def flatten_keys_input(
+    inputs: tuple[KeysInput, ...],
+) -> list[Key | KeyInputState]:
+    return [
+        y
+        for x in inputs
+        for y in ([x] if isinstance(x, (Key, KeyInputState)) else x)
+    ]
 
 
 @total_ordering
@@ -209,22 +223,24 @@ class KeySet:
     """
 
     __match_args__ = ("set",)
-    set: dict[Key, KeyInputState]
+    _mapping: dict[Key, KeyInputState]
 
     def __invert__(self):
-        return KeySet(key.__invert__() for key in self.set)
+        return KeySet(key.__invert__() for key in self._mapping)
 
     def __init__(self, input: KeysInput = {}):
         match input:
+            case KeyInputState() | Key():
+                self._mapping = KeySet(input)._mapping
             case KeySet():
-                self.set = input.set
+                self._mapping = input._mapping
             case _:
-                self.set = {
+                self._mapping = {
                     key.__keystate__().key: key.__keystate__() for key in input
                 }
 
     def __hash__(self) -> int:
-        return hash((x, y) for x, y in self.set.items())
+        return hash((x, y) for x, y in self._mapping.items())
 
     def __add__(
         self,
@@ -237,48 +253,48 @@ class KeySet:
 
         match other:
             case KeyInputState():
-                return KeySet(self.set | {other.key: other})
+                return KeySet(self._mapping | {other.key: other})
             case KeySet():
-                return KeySet(self.set | other.set)
+                return KeySet(self._mapping | other._mapping)
             case _:
                 raise TypeError(f"Invalid key input: {other}")
 
     def __bool__(self) -> bool:
-        return bool(self.set)
+        return bool(self._mapping)
 
     def __eq__(self, other: object) -> bool:
-        return isinstance(other, KeySet) and self.set == other.set
+        return isinstance(other, KeySet) and self._mapping == other._mapping
 
     def __lt__(self, other: "KeySet") -> bool:
-        if self.set.keys() != other.set.keys():
-            return self.set.keys() < other.set.keys()
-        ordered_keys = sorted(self.set.keys())
+        if self._mapping.keys() != other._mapping.keys():
+            return self._mapping.keys() < other._mapping.keys()
+        ordered_keys = sorted(self._mapping.keys())
         for key in ordered_keys:
-            if self.set[key] != other.set[key]:
-                return self.set[key] < other.set[key]
+            if self._mapping[key] != other._mapping[key]:
+                return self._mapping[key] < other._mapping[key]
         return False
 
     @property
     def specificity(self) -> int:
-        return sum(key.specificity for key in self.set)
+        return sum(key.specificity for key in self._mapping)
 
     def __iter__(self):
-        return iter(self.set.values())
+        return iter(self._mapping.values())
 
     def __contains__(self, key: Key | KeyInputState) -> bool:
-        return self.set[key.__keystate__().key] == key.__keystate__()
+        return self._mapping[key.__keystate__().key] == key.__keystate__()
 
     def __len__(self) -> int:
-        return len(self.set)
+        return len(self._mapping)
 
     def __repr__(self) -> str:
-        if not self.set:
+        if not self._mapping:
             return ""
-        joined = " + ".join(repr(key) for key in self.set)
+        joined = " + ".join(repr(key) for key in self._mapping)
         return joined
 
     def __str__(self) -> str:
-        if not self.set:
+        if not self._mapping:
             return "[]"
-        joined = ", ".join(str(key) for key in self.set.values())
+        joined = ", ".join(str(key) for key in self._mapping.values())
         return f"{{{joined}}}"
